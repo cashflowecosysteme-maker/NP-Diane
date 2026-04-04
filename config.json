@@ -1,0 +1,10 @@
+{
+  "worker_name": "nyxia-v3",
+  "account_id": "e13f8e75dfb03c488d4a0c9290cc0c81",
+  "domain": "nyxia.top",
+  "kv_namespaces": {
+    "NYXIA_MEMORY": "d129baa51bc54f1e9ae8893369873fd2",
+    "NYXIA_BOOKS": "2d7ee25f73d64ad28054cb75b47315d1",
+    "NYXIA_VAULT": "c62f5d8ca37e450bb8c9efba5263214c"
+  }
+}
