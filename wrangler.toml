@@ -1,0 +1,19 @@
+name = "nyxia-v3"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+ENVIRONMENT = "production"
+
+# KV Namespace pour la mémoire
+# [[kv_namespaces]]
+# binding = "NYXIA_MEMORY"
+# id = "your-kv-namespace-id"
+
+# Secrets à configurer via Cloudflare Dashboard:
+# - VAULT_SECRET
+# - OPENROUTER_API_KEY
+# - GITHUB_TOKEN
+# - CLOUDFLARE_API_TOKEN
+# - MANYCHAT_TOKEN
+# - SYSTEMEIO_API_KEY

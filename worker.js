@@ -1,501 +1,24 @@
-// NyXia V3 Worker - Complete Version with Model Selector
-// NE JAMAIS TOUCHER A NYXIA 2!
+// NyXia V3 - Combined Worker with Inline HTML
 
-const VAULT_SECRET_VALUE = "nx-vlt-s3cr3t-K9x2mP7wQ4nR8fY5jD3aL6cZ1bH0tE";
+// ═══════════════════════════════════════════════════════════════════════════
+//  HTML TEMPLATE (inline)
+// ═══════════════════════════════════════════════════════════════════════════
+const INDEX_HTML = "<!DOCTYPE html>\n<html lang=\"fr\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no\">\n<link rel=\"icon\" type=\"image/png\" href=\"https://nyxiapublicationweb.com/NyXia.png\">\n<title>NyXia V3 — Ton Agente IA</title>\n<link href=\"https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap\" rel=\"stylesheet\">\n<style>\n:root {\n  --bg: #0a0b12;\n  --bg2: #0e1019;\n  --bg3: #13151f;\n  --bg4: #1a1d2e;\n  --line: rgba(167,139,250,0.08);\n  --line2: rgba(167,139,250,0.15);\n  --p: #a78bfa;\n  --p-dark: #7c3aed;\n  --p-glow: rgba(167,139,250,0.3);\n  --cyan: #22d3ee;\n  --green: #34d399;\n  --amber: #fbbf24;\n  --red: #f87171;\n  --pink: #f472b6;\n  --t: #f0edff;\n  --t2: #b8b3d4;\n  --t3: #7a76a0;\n  --r: 12px;\n}\n\n* { box-sizing: border-box; margin: 0; padding: 0; }\n\nhtml, body {\n  height: 100%;\n  font-family: 'DM Sans', sans-serif;\n  background: var(--bg);\n  color: var(--t);\n  overflow: hidden;\n}\n\n/* ═══ LOGIN ══════════════════════════════════════════════════════════════ */\n\n#login-screen {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  height: 100vh;\n  background: radial-gradient(ellipse at 50% 0%, rgba(167,139,250,0.08) 0%, transparent 60%),\n              linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);\n}\n\n.login-card {\n  width: 420px;\n  max-width: 90vw;\n  padding: 48px 36px;\n  background: var(--bg2);\n  border: 1px solid var(--line2);\n  border-radius: 20px;\n  box-shadow: 0 0 80px rgba(167,139,250,0.1), 0 20px 60px rgba(0,0,0,0.4);\n  text-align: center;\n}\n\n.login-logo {\n  width: 100px;\n  height: 100px;\n  border-radius: 50%;\n  margin: 0 auto 24px;\n  display: block;\n  object-fit: cover;\n  box-shadow: 0 0 40px var(--p-glow);\n  border: 2px solid var(--line2);\n  animation: float 4s ease-in-out infinite;\n}\n\n@keyframes float {\n  0%, 100% { transform: translateY(0); }\n  50% { transform: translateY(-8px); }\n}\n\n.login-card h2 {\n  font-family: 'Orbitron', monospace;\n  font-size: 26px;\n  font-weight: 900;\n  margin-bottom: 8px;\n  background: linear-gradient(135deg, var(--p), var(--cyan));\n  -webkit-background-clip: text;\n  -webkit-text-fill-color: transparent;\n  background-clip: text;\n  letter-spacing: 2px;\n}\n\n.login-card .sub {\n  font-size: 14px;\n  color: var(--t3);\n  margin-bottom: 32px;\n}\n\n.login-card input {\n  width: 100%;\n  padding: 14px 18px;\n  margin-bottom: 12px;\n  background: var(--bg3);\n  border: 1px solid var(--line2);\n  border-radius: var(--r);\n  color: var(--t);\n  font-size: 15px;\n  font-family: inherit;\n  outline: none;\n  transition: all 0.2s;\n}\n\n.login-card input:focus {\n  border-color: var(--p);\n  box-shadow: 0 0 0 3px var(--p-glow);\n}\n\n.login-card input::placeholder { color: var(--t3); }\n\n.login-btn {\n  width: 100%;\n  padding: 14px;\n  margin-top: 8px;\n  background: linear-gradient(135deg, var(--p-dark), var(--p));\n  border: none;\n  border-radius: var(--r);\n  color: #fff;\n  font-size: 15px;\n  font-weight: 700;\n  font-family: inherit;\n  cursor: pointer;\n  transition: all 0.2s;\n}\n\n.login-btn:hover {\n  box-shadow: 0 0 30px var(--p-glow);\n  transform: translateY(-2px);\n}\n\n.login-btn:disabled {\n  opacity: 0.5;\n  cursor: not-allowed;\n  transform: none;\n  box-shadow: none;\n}\n\n.login-err {\n  color: var(--red);\n  font-size: 13px;\n  margin-top: 14px;\n  min-height: 20px;\n}\n\n/* ═══ SHELL ══════════════════════════════════════════════════════════════ */\n\n#shell { display: none; height: 100vh; }\n\n#sidebar {\n  width: 280px;\n  background: var(--bg2);\n  border-right: 1px solid var(--line);\n  display: flex;\n  flex-direction: column;\n  flex-shrink: 0;\n  transition: width 0.3s;\n}\n\n#sidebar.collapsed { width: 64px; }\n\n.sb-header {\n  padding: 20px;\n  border-bottom: 1px solid var(--line);\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n\n.sb-logo {\n  font-family: 'Orbitron', monospace;\n  font-weight: 900;\n  font-size: 16px;\n  background: linear-gradient(135deg, var(--p), var(--cyan));\n  -webkit-background-clip: text;\n  -webkit-text-fill-color: transparent;\n  background-clip: text;\n  letter-spacing: 2px;\n  white-space: nowrap;\n  overflow: hidden;\n}\n\n#sidebar.collapsed .sb-logo { opacity: 0; width: 0; }\n\n.sb-toggle {\n  width: 32px;\n  height: 32px;\n  border-radius: 8px;\n  border: 1px solid var(--line2);\n  background: var(--bg3);\n  color: var(--t3);\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  transition: all 0.15s;\n  flex-shrink: 0;\n}\n\n.sb-toggle:hover { color: var(--p); border-color: var(--p); }\n\n.sb-section { padding: 12px 0; }\n\n.sb-section-title {\n  font-size: 11px;\n  font-weight: 700;\n  color: var(--t3);\n  text-transform: uppercase;\n  letter-spacing: 1px;\n  padding: 8px 20px;\n}\n\n.sb-item {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  padding: 12px 20px;\n  font-size: 14px;\n  font-weight: 500;\n  color: var(--t2);\n  cursor: pointer;\n  transition: all 0.15s;\n  border-left: 2px solid transparent;\n  white-space: nowrap;\n  overflow: hidden;\n}\n\n.sb-item:hover { color: var(--t); background: rgba(167,139,250,0.05); }\n.sb-item.active { color: var(--p); background: rgba(167,139,250,0.08); border-left-color: var(--p); }\n\n.sb-icon { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }\n#sidebar.collapsed .sb-item span { display: none; }\n#sidebar.collapsed .sb-section-title { display: none; }\n\n.sb-new-chat {\n  margin: 12px 16px;\n  padding: 12px;\n  border-radius: var(--r);\n  border: 1px dashed rgba(167,139,250,0.4);\n  background: rgba(167,139,250,0.05);\n  color: var(--p);\n  font-size: 13px;\n  font-weight: 600;\n  cursor: pointer;\n  transition: all 0.2s;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 8px;\n  font-family: inherit;\n}\n\n.sb-new-chat:hover { background: rgba(167,139,250,0.12); border-color: var(--p); }\n#sidebar.collapsed .sb-new-chat span { display: none; }\n\n.sb-bottom {\n  margin-top: auto;\n  border-top: 1px solid var(--line);\n  padding: 16px;\n}\n\n.sb-user {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  overflow: hidden;\n  cursor: pointer;\n  padding: 8px;\n  border-radius: 10px;\n  transition: all 0.15s;\n}\n\n.sb-user:hover { background: rgba(167,139,250,0.08); }\n\n.sb-avatar {\n  width: 40px;\n  height: 40px;\n  border-radius: 12px;\n  background: linear-gradient(135deg, var(--p), var(--cyan));\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-weight: 900;\n  font-size: 16px;\n  color: #fff;\n  flex-shrink: 0;\n}\n\n.sb-uinfo { overflow: hidden; }\n.sb-uname { font-size: 14px; font-weight: 700; color: var(--t); white-space: nowrap; }\n.sb-urole { font-size: 11px; color: var(--p); font-weight: 600; letter-spacing: 0.5px; margin-top: 2px; }\n#sidebar.collapsed .sb-uinfo { display: none; }\n\n/* ═══ MAIN ═══════════════════════════════════════════════════════════════ */\n\n#main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }\n\n#topbar {\n  padding: 14px 24px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  border-bottom: 1px solid var(--line);\n  background: var(--bg2);\n  flex-shrink: 0;\n}\n\n.tb-left { display: flex; align-items: center; gap: 12px; }\n.tb-status { width: 10px; height: 10px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); }\n.tb-title { font-family: 'Orbitron', monospace; font-size: 14px; font-weight: 700; color: var(--t); letter-spacing: 1px; }\n\n.tb-right { display: flex; align-items: center; gap: 10px; }\n\n.tb-btn {\n  padding: 8px 14px;\n  border-radius: 8px;\n  font-size: 12px;\n  font-weight: 600;\n  color: var(--t2);\n  border: 1px solid var(--line2);\n  background: transparent;\n  cursor: pointer;\n  transition: all 0.15s;\n  display: flex;\n  align-items: center;\n  gap: 6px;\n  font-family: inherit;\n}\n\n.tb-btn:hover { color: var(--t); border-color: var(--p); }\n\n.user-badge {\n  font-size: 12px;\n  color: var(--p);\n  background: rgba(167,139,250,0.12);\n  padding: 6px 12px;\n  border-radius: 8px;\n  font-weight: 700;\n  letter-spacing: 0.5px;\n}\n\n/* ═══ CONTENT PANELS ═════════════════════════════════════════════════════ */\n\n.content-panel { display: none; flex: 1; flex-direction: column; overflow: hidden; }\n.content-panel.active { display: flex; }\n\n/* ═══ CHAT ZONE ══════════════════════════════════════════════════════════ */\n\n#chat-zone {\n  flex: 1;\n  overflow-y: auto;\n  padding: 28px;\n  display: flex;\n  flex-direction: column;\n  gap: 24px;\n  background: radial-gradient(ellipse at 50% 100%, rgba(167,139,250,0.03) 0%, transparent 60%);\n}\n\n#chat-zone::-webkit-scrollbar { width: 5px; }\n#chat-zone::-webkit-scrollbar-thumb { background: var(--line2); border-radius: 3px; }\n\n/* Welcome */\n.welcome {\n  text-align: center;\n  padding: 60px 24px;\n  max-width: 650px;\n  margin: auto;\n}\n\n.welcome-icon {\n  width: 90px;\n  height: 90px;\n  border-radius: 24px;\n  margin: 0 auto 24px;\n  background: linear-gradient(135deg, var(--p-dark), var(--p), var(--cyan));\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 40px;\n  box-shadow: 0 0 50px var(--p-glow);\n  animation: float 4s ease-in-out infinite;\n}\n\n.welcome h2 {\n  font-family: 'Orbitron', monospace;\n  font-size: 26px;\n  font-weight: 900;\n  margin-bottom: 12px;\n  background: linear-gradient(135deg, var(--p), var(--cyan));\n  -webkit-background-clip: text;\n  -webkit-text-fill-color: transparent;\n  background-clip: text;\n}\n\n.welcome p {\n  font-size: 15px;\n  color: var(--t2);\n  line-height: 1.8;\n  margin-bottom: 32px;\n}\n\n.suggestions {\n  display: flex;\n  flex-direction: column;\n  gap: 10px;\n  max-width: 520px;\n  margin: 0 auto;\n}\n\n.suggest-btn {\n  padding: 14px 20px;\n  border-radius: var(--r);\n  border: 1px solid var(--line2);\n  background: var(--bg3);\n  color: var(--t2);\n  font-size: 14px;\n  font-weight: 500;\n  cursor: pointer;\n  text-align: left;\n  transition: all 0.2s;\n  font-family: inherit;\n}\n\n.suggest-btn:hover {\n  border-color: var(--p);\n  color: var(--t);\n  background: rgba(167,139,250,0.08);\n  transform: translateX(4px);\n}\n\n/* Messages */\n.msg-row {\n  display: flex;\n  gap: 14px;\n  align-items: flex-start;\n  animation: fadeUp 0.3s ease both;\n}\n\n@keyframes fadeUp {\n  from { opacity: 0; transform: translateY(12px); }\n  to { opacity: 1; transform: none; }\n}\n\n.msg-row.user { flex-direction: row-reverse; }\n\n.msg-avatar {\n  width: 40px;\n  height: 40px;\n  border-radius: 12px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 18px;\n  flex-shrink: 0;\n}\n\n.msg-avatar.nyxia {\n  background: linear-gradient(135deg, var(--p-dark), var(--p));\n  font-size: 0;\n  box-shadow: 0 0 20px var(--p-glow);\n}\n\n.msg-avatar.nyxia img {\n  width: 100%;\n  height: 100%;\n  border-radius: 12px;\n  object-fit: cover;\n}\n\n.msg-avatar.user-av {\n  background: var(--bg4);\n  border: 1px solid var(--line2);\n  font-size: 15px;\n  font-weight: 700;\n  color: var(--p);\n}\n\n.msg-content { max-width: 75%; display: flex; flex-direction: column; gap: 8px; }\n.msg-row.user .msg-content { align-items: flex-end; }\n\n.msg-bubble {\n  padding: 16px 20px;\n  border-radius: 18px;\n  font-size: 15px;\n  line-height: 1.75;\n  word-wrap: break-word;\n}\n\n.msg-bubble.nyxia {\n  background: var(--bg3);\n  border: 1px solid var(--line);\n  border-bottom-left-radius: 4px;\n  color: var(--t2);\n}\n\n.msg-bubble.user {\n  background: linear-gradient(135deg, var(--p-dark), var(--p));\n  color: #fff;\n  border-bottom-right-radius: 4px;\n}\n\n.msg-bubble pre {\n  background: rgba(0,0,0,0.3);\n  border-radius: 10px;\n  padding: 14px;\n  margin: 12px 0;\n  font-family: 'JetBrains Mono', monospace;\n  font-size: 13px;\n  overflow-x: auto;\n  border: 1px solid rgba(167,139,250,0.2);\n  white-space: pre-wrap;\n}\n\n.msg-bubble code {\n  font-family: 'JetBrains Mono', monospace;\n  font-size: 13px;\n  background: rgba(0,0,0,0.3);\n  padding: 2px 7px;\n  border-radius: 5px;\n}\n\n.msg-bubble strong { color: var(--t); }\n.msg-bubble ul, .msg-bubble ol { margin: 8px 0; padding-left: 20px; }\n.msg-bubble li { margin-bottom: 4px; }\n\n.msg-time { font-size: 11px; color: var(--t3); padding: 0 4px; }\n\n/* Message Actions - NEW */\n.msg-actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  opacity: 0;\n  transition: opacity 0.2s;\n}\n\n.msg-row:hover .msg-actions { opacity: 1; }\n\n.action-btn {\n  padding: 6px 12px;\n  border-radius: 8px;\n  border: 1px solid var(--line2);\n  background: var(--bg4);\n  color: var(--t3);\n  font-size: 11px;\n  font-weight: 600;\n  cursor: pointer;\n  transition: all 0.15s;\n  font-family: inherit;\n  display: flex;\n  align-items: center;\n  gap: 4px;\n}\n\n.action-btn:hover { border-color: var(--p); color: var(--t); background: rgba(167,139,250,0.08); }\n.action-btn.copied { border-color: var(--green); color: var(--green); background: rgba(52,211,153,0.08); }\n.action-btn.speaking { border-color: var(--cyan); color: var(--cyan); background: rgba(34,211,238,0.08); }\n\n/* Typing indicator */\n.typing-indicator { display: none; align-items: center; gap: 14px; }\n.typing-indicator.show { display: flex; }\n\n.typing-dots {\n  display: flex;\n  gap: 5px;\n  padding: 16px 20px;\n  background: var(--bg3);\n  border: 1px solid var(--line);\n  border-radius: 18px;\n  border-bottom-left-radius: 4px;\n  align-items: center;\n}\n\n.typing-dots span {\n  width: 8px;\n  height: 8px;\n  border-radius: 50%;\n  background: var(--p);\n  animation: bounce 0.8s ease infinite;\n}\n\n.typing-dots span:nth-child(2) { animation-delay: 0.15s; }\n.typing-dots span:nth-child(3) { animation-delay: 0.3s; }\n\n@keyframes bounce {\n  0%, 100% { transform: translateY(0); opacity: 0.5; }\n  50% { transform: translateY(-8px); opacity: 1; }\n}\n\n.typing-timer {\n  margin-left: 10px;\n  font-size: 12px;\n  color: var(--t3);\n  font-family: 'JetBrains Mono', monospace;\n  min-width: 24px;\n}\n\n/* ═══ INPUT ZONE ═════════════════════════════════════════════════════════ */\n\n#input-zone {\n  padding: 20px 28px 24px;\n  border-top: 1px solid var(--line);\n  background: var(--bg2);\n  flex-shrink: 0;\n}\n\n.input-bar {\n  display: flex;\n  align-items: flex-end;\n  gap: 12px;\n  background: var(--bg3);\n  border: 1px solid var(--line2);\n  border-radius: 16px;\n  padding: 12px 14px;\n  transition: all 0.2s;\n}\n\n.input-bar:focus-within {\n  border-color: var(--p);\n  box-shadow: 0 0 0 3px var(--p-glow);\n}\n\n.attach-btn {\n  width: 40px;\n  height: 40px;\n  border-radius: 10px;\n  border: 1px solid var(--line2);\n  background: var(--bg4);\n  color: var(--t3);\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 18px;\n  transition: all 0.15s;\n  flex-shrink: 0;\n}\n\n.attach-btn:hover { border-color: var(--p); color: var(--p); background: rgba(167,139,250,0.08); }\n\n#msg-input {\n  flex: 1;\n  background: transparent;\n  border: none;\n  outline: none;\n  color: var(--t);\n  font-family: inherit;\n  font-size: 15px;\n  resize: none;\n  min-height: 40px;\n  max-height: 180px;\n  line-height: 1.5;\n  padding: 8px 0;\n}\n\n#msg-input::placeholder { color: var(--t3); }\n\n.send-btn {\n  width: 44px;\n  height: 44px;\n  border-radius: 12px;\n  border: none;\n  background: linear-gradient(135deg, var(--p-dark), var(--p));\n  color: #fff;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 18px;\n  transition: all 0.2s;\n  flex-shrink: 0;\n}\n\n.send-btn:hover {\n  transform: scale(1.08);\n  box-shadow: 0 0 24px var(--p-glow);\n}\n\n.send-btn:disabled {\n  opacity: 0.4;\n  cursor: not-allowed;\n  transform: none;\n  box-shadow: none;\n}\n\n.input-hint {\n  text-align: center;\n  font-size: 12px;\n  color: var(--t3);\n  margin-top: 10px;\n}\n\nkbd {\n  background: var(--bg4);\n  border: 1px solid var(--line2);\n  border-radius: 5px;\n  padding: 2px 6px;\n  font-family: 'JetBrains Mono', monospace;\n  font-size: 11px;\n}\n\n/* ═══ PROJECTS PANEL ═════════════════════════════════════════════════════ */\n\n.projects-grid {\n  flex: 1;\n  overflow-y: auto;\n  padding: 28px;\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));\n  gap: 20px;\n  align-content: start;\n}\n\n.project-card {\n  background: var(--bg3);\n  border: 1px solid var(--line);\n  border-radius: 16px;\n  padding: 20px;\n  cursor: pointer;\n  transition: all 0.2s;\n}\n\n.project-card:hover {\n  border-color: var(--p);\n  box-shadow: 0 0 30px rgba(167,139,250,0.1);\n  transform: translateY(-2px);\n}\n\n.project-card h4 {\n  font-size: 16px;\n  font-weight: 700;\n  color: var(--t);\n  margin-bottom: 8px;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n}\n\n.project-card p {\n  font-size: 13px;\n  color: var(--t3);\n  line-height: 1.6;\n  margin-bottom: 12px;\n}\n\n.project-meta {\n  display: flex;\n  gap: 12px;\n  font-size: 11px;\n  color: var(--t3);\n}\n\n.project-tag {\n  background: rgba(167,139,250,0.12);\n  color: var(--p);\n  padding: 4px 10px;\n  border-radius: 20px;\n  font-weight: 600;\n}\n\n.add-project-card {\n  border: 2px dashed var(--line2);\n  background: transparent;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  min-height: 180px;\n  color: var(--t3);\n  cursor: pointer;\n  transition: all 0.2s;\n}\n\n.add-project-card:hover {\n  border-color: var(--p);\n  color: var(--p);\n  background: rgba(167,139,250,0.05);\n}\n\n.add-project-card .icon { font-size: 40px; margin-bottom: 12px; }\n\n/* ═══ KNOWLEDGE BASE PANEL ═══════════════════════════════════════════════ */\n\n.kb-container {\n  flex: 1;\n  overflow-y: auto;\n  padding: 28px;\n}\n\n.kb-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 24px;\n}\n\n.kb-header h3 {\n  font-size: 20px;\n  font-weight: 700;\n  color: var(--t);\n}\n\n.kb-stats {\n  display: flex;\n  gap: 16px;\n}\n\n.kb-stat {\n  background: var(--bg3);\n  border: 1px solid var(--line);\n  border-radius: 10px;\n  padding: 12px 18px;\n  text-align: center;\n}\n\n.kb-stat-value {\n  font-size: 24px;\n  font-weight: 900;\n  color: var(--p);\n}\n\n.kb-stat-label {\n  font-size: 11px;\n  color: var(--t3);\n  margin-top: 2px;\n}\n\n.kb-books {\n  display: grid;\n  gap: 16px;\n}\n\n.kb-book {\n  background: var(--bg3);\n  border: 1px solid var(--line);\n  border-radius: 14px;\n  padding: 18px;\n  display: flex;\n  gap: 16px;\n  align-items: flex-start;\n}\n\n.kb-book-icon {\n  width: 50px;\n  height: 50px;\n  border-radius: 12px;\n  background: linear-gradient(135deg, var(--p-dark), var(--p));\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 24px;\n  flex-shrink: 0;\n}\n\n.kb-book-info { flex: 1; }\n.kb-book-info h4 { font-size: 15px; font-weight: 700; color: var(--t); margin-bottom: 4px; }\n.kb-book-info p { font-size: 13px; color: var(--t3); margin-bottom: 8px; }\n\n.kb-book-meta {\n  display: flex;\n  gap: 12px;\n  font-size: 11px;\n  color: var(--t3);\n}\n\n.kb-book-actions {\n  display: flex;\n  flex-direction: column;\n  gap: 6px;\n}\n\n.upload-zone {\n  border: 2px dashed var(--line2);\n  border-radius: 14px;\n  padding: 40px;\n  text-align: center;\n  cursor: pointer;\n  transition: all 0.2s;\n  margin-top: 20px;\n}\n\n.upload-zone:hover {\n  border-color: var(--p);\n  background: rgba(167,139,250,0.05);\n}\n\n.upload-zone .icon { font-size: 40px; margin-bottom: 12px; }\n.upload-zone p { color: var(--t3); font-size: 14px; }\n\n/* ═══ ACCOUNT PANEL ═══════════════════════════════════════════════════════ */\n\n.account-container {\n  flex: 1;\n  overflow-y: auto;\n  padding: 28px;\n  max-width: 600px;\n  margin: 0 auto;\n}\n\n.account-section {\n  background: var(--bg3);\n  border: 1px solid var(--line);\n  border-radius: 16px;\n  padding: 24px;\n  margin-bottom: 20px;\n}\n\n.account-section h4 {\n  font-size: 16px;\n  font-weight: 700;\n  color: var(--t);\n  margin-bottom: 16px;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n}\n\n.form-group {\n  margin-bottom: 16px;\n}\n\n.form-group label {\n  display: block;\n  font-size: 12px;\n  font-weight: 600;\n  color: var(--t2);\n  margin-bottom: 6px;\n}\n\n.form-group input {\n  width: 100%;\n  padding: 12px 16px;\n  background: var(--bg4);\n  border: 1px solid var(--line2);\n  border-radius: 10px;\n  color: var(--t);\n  font-size: 14px;\n  font-family: inherit;\n  outline: none;\n  transition: border-color 0.15s;\n}\n\n.form-group input:focus { border-color: var(--p); }\n.form-group input::placeholder { color: var(--t3); }\n\n.btn-save {\n  padding: 12px 24px;\n  border-radius: 10px;\n  border: none;\n  background: linear-gradient(135deg, var(--p-dark), var(--p));\n  color: #fff;\n  cursor: pointer;\n  font-size: 14px;\n  font-weight: 700;\n  font-family: inherit;\n  transition: all 0.15s;\n}\n\n.btn-save:hover { box-shadow: 0 0 20px var(--p-glow); }\n\n.danger-zone {\n  border-color: rgba(248,113,113,0.3);\n}\n\n.danger-zone h4 { color: var(--red); }\n\n.btn-danger {\n  padding: 12px 24px;\n  border-radius: 10px;\n  border: 1px solid var(--red);\n  background: transparent;\n  color: var(--red);\n  cursor: pointer;\n  font-size: 14px;\n  font-weight: 600;\n  font-family: inherit;\n  transition: all 0.15s;\n}\n\n.btn-danger:hover { background: rgba(248,113,113,0.1); }\n\n/* ═══ INTEGRATIONS ═══════════════════════════════════════════════════════ */\n\n.integrations-container {\n  flex: 1;\n  overflow-y: auto;\n  padding: 28px;\n  max-width: 800px;\n  margin: 0 auto;\n}\n\n.integration-card {\n  background: var(--bg3);\n  border: 1px solid var(--line);\n  border-radius: 16px;\n  padding: 24px;\n  margin-bottom: 20px;\n}\n\n.int-header {\n  display: flex;\n  align-items: center;\n  gap: 16px;\n  margin-bottom: 16px;\n}\n\n.int-icon {\n  width: 50px;\n  height: 50px;\n  border-radius: 12px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 24px;\n  flex-shrink: 0;\n}\n\n.int-info h4 {\n  font-size: 16px;\n  font-weight: 700;\n  color: var(--t);\n  margin-bottom: 4px;\n}\n\n.int-status {\n  font-size: 12px;\n  font-weight: 600;\n  padding: 4px 10px;\n  border-radius: 20px;\n}\n\n.int-status.connected {\n  background: rgba(52,211,153,0.15);\n  color: var(--green);\n}\n\n.int-status.disconnected {\n  background: rgba(248,113,113,0.15);\n  color: var(--red);\n}\n\n.int-desc {\n  font-size: 14px;\n  color: var(--t2);\n  line-height: 1.6;\n  margin-bottom: 16px;\n}\n\n.int-access {\n  background: var(--bg4);\n  border-radius: 10px;\n  padding: 14px;\n  margin-bottom: 12px;\n  font-size: 13px;\n}\n\n.int-access strong {\n  color: var(--t);\n  display: block;\n  margin-bottom: 8px;\n}\n\n.int-access ul {\n  list-style: none;\n  color: var(--t2);\n}\n\n.int-access li {\n  padding: 3px 0;\n}\n\n.int-hint {\n  font-size: 12px;\n  color: var(--t3);\n  font-style: italic;\n  margin-bottom: 12px;\n}\n\n.int-warning {\n  font-size: 12px;\n  color: var(--amber);\n  margin-bottom: 12px;\n}\n\n.int-btn {\n  padding: 12px 24px;\n  border-radius: 10px;\n  border: none;\n  background: linear-gradient(135deg, var(--p-dark), var(--p));\n  color: #fff;\n  cursor: pointer;\n  font-size: 14px;\n  font-weight: 700;\n  font-family: inherit;\n  transition: all 0.15s;\n}\n\n.int-btn:hover { box-shadow: 0 0 20px var(--p-glow); }\n\n.int-actions {\n  display: flex;\n  gap: 12px;\n  margin-top: 16px;\n}\n\n.int-btn-secondary {\n  padding: 10px 18px;\n  border-radius: 8px;\n  border: 1px solid var(--line2);\n  background: transparent;\n  color: var(--t2);\n  cursor: pointer;\n  font-size: 13px;\n  font-weight: 600;\n  font-family: inherit;\n  transition: all 0.15s;\n}\n\n.int-btn-secondary:hover { border-color: var(--p); color: var(--t); }\n\n.int-btn-danger {\n  padding: 10px 18px;\n  border-radius: 8px;\n  border: 1px solid var(--red);\n  background: transparent;\n  color: var(--red);\n  cursor: pointer;\n  font-size: 13px;\n  font-weight: 600;\n  font-family: inherit;\n  transition: all 0.15s;\n}\n\n.int-btn-danger:hover { background: rgba(248,113,113,0.1); }\n\n/* ═══ MODALS ═════════════════════════════════════════════════════════════ */\n\n.modal-bg {\n  display: none;\n  position: fixed;\n  inset: 0;\n  background: rgba(0,0,0,0.7);\n  backdrop-filter: blur(8px);\n  z-index: 200;\n  align-items: center;\n  justify-content: center;\n}\n\n.modal-bg.open { display: flex; }\n\n.modal {\n  background: var(--bg3);\n  border: 1px solid var(--line2);\n  border-radius: 20px;\n  width: 100%;\n  max-width: 580px;\n  max-height: 85vh;\n  overflow-y: auto;\n  padding: 28px;\n}\n\n.modal::-webkit-scrollbar { width: 4px; }\n.modal::-webkit-scrollbar-thumb { background: var(--line2); border-radius: 2px; }\n\n.modal h3 {\n  font-size: 18px;\n  font-weight: 700;\n  margin-bottom: 6px;\n  color: var(--t);\n}\n\n.modal .modal-sub {\n  font-size: 13px;\n  color: var(--t3);\n  margin-bottom: 20px;\n}\n\n.modal input, .modal textarea {\n  width: 100%;\n  padding: 12px 16px;\n  margin-bottom: 12px;\n  background: var(--bg4);\n  border: 1px solid var(--line2);\n  border-radius: 10px;\n  color: var(--t);\n  font-size: 14px;\n  font-family: inherit;\n  outline: none;\n  transition: border-color 0.15s;\n}\n\n.modal input:focus, .modal textarea:focus { border-color: var(--p); }\n.modal input::placeholder, .modal textarea::placeholder { color: var(--t3); }\n\n.modal textarea { min-height: 100px; resize: vertical; }\n\n.modal-actions {\n  display: flex;\n  gap: 12px;\n  justify-content: flex-end;\n  margin-top: 20px;\n}\n\n.btn-cancel {\n  padding: 10px 22px;\n  border-radius: 10px;\n  border: 1px solid var(--line2);\n  background: transparent;\n  color: var(--t2);\n  cursor: pointer;\n  font-size: 14px;\n  font-weight: 600;\n  font-family: inherit;\n  transition: all 0.15s;\n}\n\n.btn-cancel:hover { border-color: var(--t3); color: var(--t); }\n\n.btn-primary {\n  padding: 10px 22px;\n  border-radius: 10px;\n  border: none;\n  background: linear-gradient(135deg, var(--p-dark), var(--p));\n  color: #fff;\n  cursor: pointer;\n  font-size: 14px;\n  font-weight: 700;\n  font-family: inherit;\n  transition: all 0.15s;\n}\n\n.btn-primary:hover { box-shadow: 0 0 20px var(--p-glow); }\n\n/* ═══ TOAST ══════════════════════════════════════════════════════════════ */\n\n.toast {\n  position: fixed;\n  bottom: 28px;\n  left: 50%;\n  transform: translateX(-50%) translateY(80px);\n  background: var(--green);\n  color: #000;\n  padding: 12px 24px;\n  border-radius: 50px;\n  font-weight: 700;\n  font-size: 14px;\n  transition: transform 0.3s;\n  z-index: 300;\n  opacity: 0;\n  font-family: inherit;\n}\n\n.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }\n.toast.error { background: var(--red); color: #fff; }\n\n/* ═══ RESPONSIVE ═════════════════════════════════════════════════════════ */\n\n@media (max-width: 768px) {\n  #sidebar { display: none; }\n  #chat-zone { padding: 20px; }\n  #input-zone { padding: 16px 20px 20px; }\n  .msg-content { max-width: 90%; }\n  .user-badge { display: none; }\n  .msg-actions { opacity: 1; }\n}\n</style>\n</head>\n<body>\n\n<!-- LOGIN SCREEN -->\n<div id=\"login-screen\">\n  <div class=\"login-card\">\n    <img class=\"login-logo\" src=\"https://nyxiapublicationweb.com/NyXia.png\" alt=\"NyXia\">\n    <h2>NyXia V3</h2>\n    <p class=\"sub\">Ton agente IA personnelle</p>\n    <input type=\"email\" id=\"login-email\" placeholder=\"Email\" autocomplete=\"email\">\n    <input type=\"password\" id=\"login-pass\" placeholder=\"Mot de passe\" autocomplete=\"current-password\">\n    <button class=\"login-btn\" id=\"login-btn\" onclick=\"doLogin()\">Connexion</button>\n    \n    <div style=\"display:flex;align-items:center;gap:12px;margin:20px 0\">\n      <div style=\"flex:1;height:1px;background:var(--line2)\"></div>\n      <span style=\"color:var(--t3);font-size:12px\">ou</span>\n      <div style=\"flex:1;height:1px;background:var(--line2)\"></div>\n    </div>\n    \n    <button class=\"login-btn google-btn\" id=\"google-login-btn\" onclick=\"loginWithGoogle()\" style=\"background:#fff;color:#333;display:flex;align-items:center;justify-content:center;gap:10px\">\n      <svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\">\n        <path fill=\"#4285F4\" d=\"M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z\"/>\n        <path fill=\"#34A853\" d=\"M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z\"/>\n        <path fill=\"#FBBC05\" d=\"M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z\"/>\n        <path fill=\"#EA4335\" d=\"M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z\"/>\n      </svg>\n      Se connecter avec Google\n    </button>\n    \n    <div class=\"login-err\" id=\"login-err\"></div>\n  </div>\n</div>\n\n<!-- CHAT SHELL -->\n<div id=\"shell\" style=\"display:none\">\n  <div id=\"sidebar\">\n    <div class=\"sb-header\">\n      <div class=\"sb-logo\">NyXia V3 ✦</div>\n      <button class=\"sb-toggle\" onclick=\"toggleSidebar()\" title=\"Réduire\">◀</button>\n    </div>\n\n    <button class=\"sb-new-chat\" onclick=\"newConversation()\">\n      <span style=\"font-size:20px\">✦</span>\n      <span>Nouvelle conversation</span>\n    </button>\n\n    <div class=\"sb-section\">\n      <div class=\"sb-section-title\">Principal</div>\n      <div class=\"sb-item active\" onclick=\"showPanel('chat')\"><span class=\"sb-icon\">💬</span><span>Chat</span></div>\n      <div class=\"sb-item\" onclick=\"showPanel('projects')\"><span class=\"sb-icon\">📁</span><span>Projets</span></div>\n      <div class=\"sb-item\" onclick=\"showPanel('knowledge')\"><span class=\"sb-icon\">📖</span><span>Base de connaissance</span></div>\n    </div>\n\n    <div class=\"sb-section\">\n      <div class=\"sb-section-title\">Outils</div>\n      <div class=\"sb-item\" onclick=\"showPanel('integrations')\"><span class=\"sb-icon\">🔗</span><span>Intégrations</span></div>\n    </div>\n\n    <div class=\"sb-section\">\n      <div class=\"sb-section-title\">Sécurité</div>\n      <div class=\"sb-item\" onclick=\"showPanel('tokens')\"><span class=\"sb-icon\">🔑</span><span>Tokens & Secrets</span></div>\n    </div>\n\n    <div class=\"sb-section\">\n      <div class=\"sb-section-title\">Données</div>\n      <div class=\"sb-item\" onclick=\"openBooks()\"><span class=\"sb-icon\">📚</span><span>Mes livres</span></div>\n      <div class=\"sb-item\" onclick=\"openMemory()\"><span class=\"sb-icon\">🧠</span><span>Mémoire</span></div>\n    </div>\n\n    <div class=\"sb-section\">\n      <div class=\"sb-section-title\">Compte</div>\n      <div class=\"sb-item\" onclick=\"showPanel('account')\"><span class=\"sb-icon\">🔐</span><span>Mon compte</span></div>\n      <div class=\"sb-item\" onclick=\"doLogout()\"><span class=\"sb-icon\">🚪</span><span>Quitter</span></div>\n    </div>\n\n    <div class=\"sb-bottom\">\n      <div class=\"sb-user\" onclick=\"showPanel('account')\">\n        <div class=\"sb-avatar\" id=\"sb-avatar\">D</div>\n        <div class=\"sb-uinfo\">\n          <div class=\"sb-uname\" id=\"sb-uname\">Diane</div>\n          <div class=\"sb-urole\">✦ CRÉATRICE</div>\n        </div>\n      </div>\n    </div>\n  </div>\n\n  <div id=\"main\">\n    <div id=\"topbar\">\n      <div class=\"tb-left\">\n        <div class=\"tb-status\" id=\"status-dot\"></div>\n        <span class=\"tb-title\" id=\"topbar-title\">💬 Chat avec NyXia</span>\n      </div>\n      <div class=\"tb-right\">\n        <span class=\"user-badge\" id=\"llm-badge\" onclick=\"openConfig()\" style=\"cursor:pointer\">⏳ GLM-5</span>\n        <span class=\"user-badge\" id=\"topbar-badge\">Diane</span>\n      </div>\n    </div>\n\n    <!-- CHAT PANEL -->\n    <div id=\"panel-chat\" class=\"content-panel active\">\n      <div id=\"chat-zone\">\n        <div class=\"welcome\" id=\"welcome-screen\">\n          <div class=\"welcome-icon\">✦</div>\n          <h2>Bonjour Diane!</h2>\n          <p>Je suis NyXia, ton agente IA. Je suis tellement contente de te revoir! Ça fait plaisir de travailler avec toi encore aujourd'hui. Qu'est-ce qu'on crée ensemble?</p>\n          <div class=\"suggestions\">\n            <button class=\"suggest-btn\" onclick=\"useSuggestion(this)\">📝 Continuons mon livre, on s'était arrêtés au chapitre...</button>\n            <button class=\"suggest-btn\" onclick=\"useSuggestion(this)\">💻 Pousse le code sur GitHub pour le projet</button>\n            <button class=\"suggest-btn\" onclick=\"useSuggestion(this)\">🚀 Déploie les modifications sur Cloudflare</button>\n            <button class=\"suggest-btn\" onclick=\"useSuggestion(this)\">📊 Aide-moi à planifier mes projets de la semaine</button>\n          </div>\n        </div>\n        <div class=\"typing-indicator\" id=\"typing\">\n          <div class=\"msg-avatar nyxia\"><img src=\"https://nyxiapublicationweb.com/NyXia.png\"></div>\n          <div class=\"typing-dots\"><span></span><span></span><span></span><span class=\"typing-timer\" id=\"typing-timer\"></span></div>\n        </div>\n      </div>\n      <div id=\"input-zone\">\n        <div id=\"file-preview-area\" style=\"display:none;padding:12px;margin-bottom:12px;background:var(--bg3);border:1px solid var(--line2);border-radius:12px\">\n          <div style=\"display:flex;align-items:center;justify-content:space-between;margin-bottom:8px\">\n            <span style=\"font-size:13px;font-weight:600;color:var(--t2)\">📎 Fichier joint</span>\n            <button onclick=\"clearAttachedFile()\" style=\"background:none;border:none;color:var(--t3);cursor:pointer;font-size:18px\" title=\"Supprimer\">✕</button>\n          </div>\n          <div id=\"file-preview-content\"></div>\n        </div>\n        \n        <div class=\"input-bar\">\n          <button class=\"attach-btn\" onclick=\"document.getElementById('file-input').click()\" title=\"Joindre un fichier (PDF, Image, ZIP)\">📎</button>\n          <input type=\"file\" id=\"file-input\" style=\"display:none\" accept=\".pdf,.png,.jpg,.jpeg,.gif,.webp,.zip\" onchange=\"handleFileSelect(this)\">\n          <textarea id=\"msg-input\" placeholder=\"Écris à NyXia...\" rows=\"1\" onkeydown=\"onKey(event)\" oninput=\"autoResize(this)\"></textarea>\n          <button class=\"send-btn\" id=\"send-btn\" onclick=\"send()\" title=\"Envoyer\">➤</button>\n        </div>\n        <div class=\"input-hint\">\n          <kbd>Entrée</kbd> pour envoyer · <kbd>Maj</kbd>+<kbd>Entrée</kbd> pour nouvelle ligne · <span style=\"color:var(--p)\">📎 PDF, Image, ZIP acceptés</span>\n        </div>\n      </div>\n    </div>\n\n    <!-- PROJECTS PANEL -->\n    <div id=\"panel-projects\" class=\"content-panel\">\n      <div class=\"projects-grid\" id=\"projects-grid\">\n        <div class=\"add-project-card\" onclick=\"createProject()\">\n          <div class=\"icon\">✦</div>\n          <span>Créer un nouveau projet</span>\n        </div>\n      </div>\n    </div>\n\n    <!-- KNOWLEDGE BASE PANEL -->\n    <div id=\"panel-knowledge\" class=\"content-panel\">\n      <div class=\"kb-container\">\n        <div class=\"kb-header\">\n          <h3>📖 Base de Connaissance</h3>\n          <div class=\"kb-stats\">\n            <div class=\"kb-stat\">\n              <div class=\"kb-stat-value\" id=\"kb-books-count\">0</div>\n              <div class=\"kb-stat-label\">Livres</div>\n            </div>\n            <div class=\"kb-stat\">\n              <div class=\"kb-stat-value\" id=\"kb-words-count\">0</div>\n              <div class=\"kb-stat-label\">Mots</div>\n            </div>\n          </div>\n        </div>\n        <div class=\"kb-books\" id=\"kb-books\"></div>\n        <div class=\"upload-zone\" onclick=\"document.getElementById('kb-upload').click()\">\n          <div class=\"icon\">📤</div>\n          <p>Clique pour ajouter un livre à ma base de connaissance<br><small>PDF, TXT, DOCX acceptés</small></p>\n        </div>\n        <input type=\"file\" id=\"kb-upload\" style=\"display:none\" accept=\".pdf,.txt,.docx\" onchange=\"uploadKnowledge(this)\">\n      </div>\n    </div>\n\n    <!-- ACCOUNT PANEL -->\n    <div id=\"panel-account\" class=\"content-panel\">\n      <div class=\"account-container\">\n        <div class=\"account-section\">\n          <h4>👤 Informations personnelles</h4>\n          <div class=\"form-group\">\n            <label>Nom</label>\n            <input type=\"text\" id=\"account-name\" placeholder=\"Ton nom\">\n          </div>\n          <div class=\"form-group\">\n            <label>Email</label>\n            <input type=\"email\" id=\"account-email\" placeholder=\"Ton email\">\n          </div>\n          <button class=\"btn-save\" onclick=\"saveAccountInfo()\">Sauvegarder</button>\n        </div>\n\n        <div class=\"account-section\">\n          <h4>🔐 Changer le mot de passe</h4>\n          <div class=\"form-group\">\n            <label>Mot de passe actuel</label>\n            <input type=\"password\" id=\"current-password\" placeholder=\"Mot de passe actuel\">\n          </div>\n          <div class=\"form-group\">\n            <label>Nouveau mot de passe</label>\n            <input type=\"password\" id=\"new-password\" placeholder=\"Nouveau mot de passe\">\n          </div>\n          <div class=\"form-group\">\n            <label>Confirmer le nouveau mot de passe</label>\n            <input type=\"password\" id=\"confirm-password\" placeholder=\"Confirmer le mot de passe\">\n          </div>\n          <button class=\"btn-save\" onclick=\"changePassword()\">Changer le mot de passe</button>\n        </div>\n\n        <div class=\"account-section danger-zone\">\n          <h4>⚠️ Zone de danger</h4>\n          <p style=\"font-size:13px;color:var(--t3);margin-bottom:16px\">Ces actions sont irréversibles. Procède avec prudence.</p>\n          <button class=\"btn-danger\" onclick=\"clearAllData()\">🗑 Effacer toutes mes données</button>\n        </div>\n      </div>\n    </div>\n\n    <!-- TOKENS & SECRETS PANEL -->\n    <div id=\"panel-tokens\" class=\"content-panel\">\n      <div class=\"integrations-container\">\n        <h3 style=\"font-size:22px;font-weight:700;margin-bottom:8px\">🔑 Tokens & Secrets</h3>\n        <p style=\"color:var(--t3);margin-bottom:24px\">Configure tes clés API en toute sécurité. Elles sont chiffrées et ne s'affichent jamais dans le chat.</p>\n        \n        <!-- OpenRouter (GLM-5) -->\n        <div class=\"integration-card\">\n          <div class=\"int-header\">\n            <div class=\"int-icon\" style=\"background:linear-gradient(135deg,#8b5cf6,#a855f7)\">🧠</div>\n            <div class=\"int-info\">\n              <h4>OpenRouter (GLM-5)</h4>\n              <span class=\"int-status\" id=\"openrouter-token-status\">Vérification...</span>\n            </div>\n          </div>\n          <p class=\"int-desc\">Clé API pour le cœur de NyXia. Nécessaire pour toutes les conversations.</p>\n          <div class=\"form-group\">\n            <input type=\"password\" id=\"token-openrouter\" placeholder=\"sk-or-v1-...\" style=\"margin-bottom:8px\">\n          </div>\n          <button class=\"int-btn\" onclick=\"saveToken('openrouter')\">💾 Sauvegarder</button>\n        </div>\n\n        <!-- GitHub -->\n        <div class=\"integration-card\">\n          <div class=\"int-header\">\n            <div class=\"int-icon\" style=\"background:linear-gradient(135deg,#1f2937,#374151)\">🐙</div>\n            <div class=\"int-info\">\n              <h4>GitHub</h4>\n              <span class=\"int-status\" id=\"github-token-status\">Vérification...</span>\n            </div>\n          </div>\n          <p class=\"int-desc\">Permet à NyXia de pousser du code, créer des repos et gérer tes projets.</p>\n          <div class=\"form-group\">\n            <label style=\"font-size:12px;color:var(--t2);margin-bottom:4px;display:block\">Token (ghp_...)</label>\n            <input type=\"password\" id=\"token-github\" placeholder=\"ghp_...\" style=\"margin-bottom:8px\">\n          </div>\n          <div class=\"form-group\">\n            <label style=\"font-size:12px;color:var(--t2);margin-bottom:4px;display:block\">Username GitHub</label>\n            <input type=\"text\" id=\"token-github-owner\" placeholder=\"ton-username\" style=\"margin-bottom:8px\">\n          </div>\n          <button class=\"int-btn\" onclick=\"saveToken('github')\">💾 Sauvegarder</button>\n        </div>\n\n        <!-- Cloudflare -->\n        <div class=\"integration-card\">\n          <div class=\"int-header\">\n            <div class=\"int-icon\" style=\"background:linear-gradient(135deg,#f97316,#ea580c)\">☁️</div>\n            <div class=\"int-info\">\n              <h4>Cloudflare</h4>\n              <span class=\"int-status\" id=\"cloudflare-token-status\">Vérification...</span>\n            </div>\n          </div>\n          <p class=\"int-desc\">Pour déployer des Workers, gérer le DNS et les domaines.</p>\n          <div class=\"form-group\">\n            <label style=\"font-size:12px;color:var(--t2);margin-bottom:4px;display:block\">API Token</label>\n            <input type=\"password\" id=\"token-cloudflare\" placeholder=\"cfat_...\" style=\"margin-bottom:8px\">\n          </div>\n          <div class=\"form-group\">\n            <label style=\"font-size:12px;color:var(--t2);margin-bottom:4px;display:block\">Account ID</label>\n            <input type=\"text\" id=\"token-cloudflare-account\" placeholder=\"e13f8e75...\" style=\"margin-bottom:8px\">\n          </div>\n          <button class=\"int-btn\" onclick=\"saveToken('cloudflare')\">💾 Sauvegarder</button>\n        </div>\n\n        <!-- ManyChat -->\n        <div class=\"integration-card\">\n          <div class=\"int-header\">\n            <div class=\"int-icon\" style=\"background:linear-gradient(135deg,#00b4d8,#0077b6)\">💬</div>\n            <div class=\"int-info\">\n              <h4>ManyChat</h4>\n              <span class=\"int-status\" id=\"manychat-token-status\">Vérification...</span>\n            </div>\n          </div>\n          <p class=\"int-desc\">Pour gérer les flows, contacts et messages ManyChat.</p>\n          <div class=\"form-group\">\n            <input type=\"password\" id=\"token-manychat\" placeholder=\"Token API ManyChat\" style=\"margin-bottom:8px\">\n          </div>\n          <button class=\"int-btn\" onclick=\"saveToken('manychat')\">💾 Sauvegarder</button>\n        </div>\n\n        <!-- Systeme.io -->\n        <div class=\"integration-card\">\n          <div class=\"int-header\">\n            <div class=\"int-icon\" style=\"background:linear-gradient(135deg,#6366f1,#8b5cf6)\">⚡</div>\n            <div class=\"int-info\">\n              <h4>Systeme.io</h4>\n              <span class=\"int-status\" id=\"systeme-token-status\">Vérification...</span>\n            </div>\n          </div>\n          <p class=\"int-desc\">Pour gérer les contacts et tags Systeme.io.</p>\n          <div class=\"form-group\">\n            <input type=\"password\" id=\"token-systeme\" placeholder=\"Clé API Systeme.io\" style=\"margin-bottom:8px\">\n          </div>\n          <button class=\"int-btn\" onclick=\"saveToken('systeme')\">💾 Sauvegarder</button>\n        </div>\n\n        <!-- Info Box -->\n        <div style=\"background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.2);border-radius:12px;padding:16px;margin-top:20px\">\n          <h4 style=\"color:#34d399;font-size:14px;margin-bottom:8px\">🔒 Sécurité</h4>\n          <ul style=\"color:var(--t2);font-size:13px;line-height:1.8;margin-left:16px\">\n            <li>Les tokens sont <strong>chiffrés</strong> et stockés de façon sécurisée</li>\n            <li>Ils ne sont <strong>jamais affichés</strong> dans le chat</li>\n            <li>Seule toi peux les voir et les modifier</li>\n            <li>Tu peux les supprimer à tout moment</li>\n          </ul>\n        </div>\n\n      </div>\n    </div>\n\n    <!-- INTEGRATIONS PANEL v2 -->\n    <div id=\"panel-integrations\" class=\"content-panel\">\n      <div class=\"integrations-container\">\n        <h3 style=\"font-size:22px;font-weight:700;margin-bottom:8px\">🔗 Intégrations</h3>\n        <p style=\"color:var(--t3);margin-bottom:24px\">Connecte tes outils pour que NyXia y accède directement</p>\n        \n        <!-- Google Workspace -->\n        <div class=\"integration-card\" id=\"int-google\">\n          <div class=\"int-header\">\n            <div class=\"int-icon\" style=\"background:linear-gradient(135deg,#4285f4,#34a853,#fbbc05,#ea4335)\">🌐</div>\n            <div class=\"int-info\">\n              <h4>Google Workspace</h4>\n              <span class=\"int-status disconnected\" id=\"google-status\">Non connecté</span>\n            </div>\n          </div>\n          <p class=\"int-desc\">Connecte ton Google Drive, Sheets, Docs et Forms. NyXia pourra lire, créer et modifier tes fichiers directement depuis le chat.</p>\n          <div class=\"int-access\" id=\"google-access\" style=\"display:none\">\n            <strong>Accès actif :</strong>\n            <ul>\n              <li>✓ Google Drive (lecture/écriture)</li>\n              <li>✓ Google Sheets (lecture/écriture)</li>\n              <li>✓ Google Docs (lecture)</li>\n              <li>✓ Profil et email</li>\n            </ul>\n          </div>\n          <p class=\"int-hint\" id=\"google-hint\">💡 Une fenêtre Google va s'ouvrir — clique juste \"Autoriser\"</p>\n          <div class=\"int-actions\">\n            <button class=\"int-btn\" id=\"google-connect-btn\" onclick=\"connectGoogle()\">🔗 Connecter Google</button>\n            <button class=\"int-btn-danger\" id=\"google-disconnect-btn\" onclick=\"disconnectGoogle()\" style=\"display:none\">Déconnecter</button>\n          </div>\n        </div>\n\n        <!-- ManyChat -->\n        <div class=\"integration-card\" id=\"int-manychat\">\n          <div class=\"int-header\">\n            <div class=\"int-icon\" style=\"background:linear-gradient(135deg,#00b4d8,#0077b6)\">💬</div>\n            <div class=\"int-info\">\n              <h4>ManyChat</h4>\n              <span class=\"int-status connected\" id=\"manychat-status\">Connecté</span>\n            </div>\n          </div>\n          <p class=\"int-desc\">Envoie des messages automatiques, déclenche des flows et gère tes contacts via ManyChat DM directement depuis le chat avec NyXia.</p>\n          <div class=\"int-access\">\n            <strong>Accès actif :</strong>\n            <ul>\n              <li>✓ Page Oznya (Pro)</li>\n              <li>✓ Flows (lister, déclencher)</li>\n              <li>✓ Tags (lister, appliquer aux contacts)</li>\n              <li>✓ Contacts (trouver par email, envoyer des DM)</li>\n              <li>✓ Messages (envoyer un DM personnalisé)</li>\n            </ul>\n          </div>\n          <p class=\"int-hint\">💡 Dis-moi dans le chat : \"liste mes flows\", \"trouve user@email.com\", \"envoie un DM à...\", \"déclenche le flow...\", \"ajoute un tag\"...</p>\n          <div class=\"int-actions\">\n            <button class=\"int-btn-secondary\" onclick=\"configureManyChat()\">⚙️ Configurer</button>\n            <button class=\"int-btn-danger\" onclick=\"disconnectManyChat()\">Déconnecter</button>\n          </div>\n        </div>\n\n        <!-- Zapier -->\n        <div class=\"integration-card\" id=\"int-zapier\">\n          <div class=\"int-header\">\n            <div class=\"int-icon\" style=\"background:linear-gradient(135deg,#ff4f00,#ff8c00)\">⚡</div>\n            <div class=\"int-info\">\n              <h4>Zapier</h4>\n              <span class=\"int-status connected\" id=\"zapier-status\">Connecté</span>\n            </div>\n          </div>\n          <p class=\"int-desc\">Connecte NyXia à n'importe quel outil via Zapier (entrant + sortant).</p>\n          <div class=\"int-access\">\n            <strong>Accès actif :</strong>\n            <ul>\n              <li>✓ Webhooks entrants (Zapier → NyXia)</li>\n              <li>✓ Webhooks sortants (NyXia → Zapier)</li>\n              <li>✓ Contacts, ventes, leads automatisés</li>\n              <li>✓ Flux personnalisés</li>\n            </ul>\n          </div>\n          <p class=\"int-hint\">💡 Dis-moi dans le chat : \"guide Zapier\", \"URL webhook pour Zapier\", \"ajoute un webhook Zapier\", \"envoie des données à Zapier\"...</p>\n          <div class=\"int-actions\">\n            <button class=\"int-btn-secondary\" onclick=\"configureZapier()\">⚙️ Configurer</button>\n            <button class=\"int-btn-danger\" onclick=\"disconnectZapier()\">Déconnecter</button>\n          </div>\n        </div>\n\n        <!-- Systeme.io -->\n        <div class=\"integration-card\" id=\"int-systeme\">\n          <div class=\"int-header\">\n            <div class=\"int-icon\" style=\"background:linear-gradient(135deg,#6366f1,#8b5cf6)\">⚡</div>\n            <div class=\"int-info\">\n              <h4>Systeme.io</h4>\n              <span class=\"int-status connected\" id=\"systeme-status\">Connecté</span>\n            </div>\n          </div>\n          <p class=\"int-desc\">Gère tes contacts et tags directement depuis le chat avec NyXia.</p>\n          <div class=\"int-access\">\n            <strong>Accès actif :</strong>\n            <ul>\n              <li>✓ Contacts (créer, lire, modifier, taguer)</li>\n              <li>✓ Tags (lister, créer, appliquer)</li>\n              <li>✓ Actions rapides (contact + tag en 1 clic)</li>\n            </ul>\n          </div>\n          <p class=\"int-hint\">💡 Dis-moi dans le chat : \"montre mes contacts\", \"cherche marie@email.com\", \"ajoute un contact\", \"liste mes tags\"...</p>\n          <p class=\"int-warning\">⚠️ Produits, formations, tunnels et commandes ne sont pas disponibles via l'API Systeme.io</p>\n          <div class=\"int-actions\">\n            <button class=\"int-btn-secondary\" onclick=\"configureSysteme()\">⚙️ Configurer</button>\n            <button class=\"int-btn-danger\" onclick=\"disconnectSysteme()\">Déconnecter</button>\n          </div>\n        </div>\n\n      </div>\n    </div>\n  </div>\n</div>\n\n<!-- CONFIG MODAL -->\n<div class=\"modal-bg\" id=\"config-panel\">\n  <div class=\"modal\" style=\"max-width:520px\">\n    <h3>⚙️ Configuration</h3>\n    <p class=\"modal-sub\">Configure tes clés API pour les intégrations</p>\n    \n    <label style=\"font-size:12px;font-weight:600;color:var(--t2);display:block;margin-bottom:6px\">OpenRouter API Key (GLM-5)</label>\n    <input type=\"password\" id=\"config-openrouter\" placeholder=\"sk-or-v1-...\">\n    \n    <label style=\"font-size:12px;font-weight:600;color:var(--t2);display:block;margin:12px 0 6px\">GitHub Token</label>\n    <input type=\"password\" id=\"config-github\" placeholder=\"ghp_...\">\n    \n    <label style=\"font-size:12px;font-weight:600;color:var(--t2);display:block;margin:12px 0 6px\">GitHub Owner (username)</label>\n    <input type=\"text\" id=\"config-github-owner\" placeholder=\"username\">\n    \n    <label style=\"font-size:12px;font-weight:600;color:var(--t2);display:block;margin:12px 0 6px\">Cloudflare API Token</label>\n    <input type=\"password\" id=\"config-cf-token\" placeholder=\"Token Cloudflare\">\n    \n    <label style=\"font-size:12px;font-weight:600;color:var(--t2);display:block;margin:12px 0 6px\">Cloudflare Account ID</label>\n    <input type=\"text\" id=\"config-cf-account\" placeholder=\"Account ID\">\n    \n    <div class=\"modal-actions\">\n      <button class=\"btn-cancel\" onclick=\"closeConfig()\">Annuler</button>\n      <button class=\"btn-primary\" onclick=\"saveConfig()\">Sauvegarder</button>\n    </div>\n  </div>\n</div>\n\n<!-- BOOKS MODAL -->\n<div class=\"modal-bg\" id=\"books-panel\">\n  <div class=\"modal\" style=\"max-width:640px\">\n    <h3>📚 Mes Livres</h3>\n    <p class=\"modal-sub\">Tous tes livres en cours d'écriture avec NyXia</p>\n    <div id=\"books-list\" style=\"margin-top:16px\"></div>\n    <div class=\"modal-actions\">\n      <button class=\"btn-cancel\" onclick=\"closeBooks()\">Fermer</button>\n      <button class=\"btn-primary\" onclick=\"createNewBook()\">✦ Nouveau livre</button>\n    </div>\n  </div>\n</div>\n\n<!-- MEMORY MODAL -->\n<div class=\"modal-bg\" id=\"memory-panel\">\n  <div class=\"modal\" style=\"max-width:640px\">\n    <h3>🧠 Mémoire de NyXia</h3>\n    <p class=\"modal-sub\">Ce dont NyXia se souvient de toi et de vos projets</p>\n    <div id=\"memory-content\" style=\"margin-top:16px\"></div>\n    <div class=\"modal-actions\">\n      <button class=\"btn-primary\" onclick=\"closeMemory()\">Fermer</button>\n    </div>\n  </div>\n</div>\n\n<!-- SEND TO CLIENT MODAL -->\n<div class=\"modal-bg\" id=\"send-client-panel\">\n  <div class=\"modal\" style=\"max-width:480px\">\n    <h3>📤 Envoyer à un client</h3>\n    <p class=\"modal-sub\">Envoie cette conversation par email</p>\n    \n    <label style=\"font-size:12px;font-weight:600;color:var(--t2);display:block;margin-bottom:6px\">Email du client</label>\n    <input type=\"email\" id=\"client-email\" placeholder=\"client@exemple.com\">\n    \n    <label style=\"font-size:12px;font-weight:600;color:var(--t2);display:block;margin:12px 0 6px\">Sujet (optionnel)</label>\n    <input type=\"text\" id=\"client-subject\" placeholder=\"Conversation avec NyXia\">\n    \n    <div class=\"modal-actions\">\n      <button class=\"btn-cancel\" onclick=\"closeSendClient()\">Annuler</button>\n      <button class=\"btn-primary\" onclick=\"sendToClient()\">Envoyer</button>\n    </div>\n  </div>\n</div>\n\n<!-- PROJECT MODAL -->\n<div class=\"modal-bg\" id=\"project-modal\">\n  <div class=\"modal\" style=\"max-width:520px\">\n    <h3>📁 Nouveau Projet</h3>\n    <p class=\"modal-sub\">Crée un projet à travailler avec NyXia</p>\n    \n    <label style=\"font-size:12px;font-weight:600;color:var(--t2);display:block;margin-bottom:6px\">Nom du projet</label>\n    <input type=\"text\" id=\"project-name\" placeholder=\"Mon super projet\">\n    \n    <label style=\"font-size:12px;font-weight:600;color:var(--t2);display:block;margin:12px 0 6px\">Description</label>\n    <textarea id=\"project-desc\" placeholder=\"Décris ton projet...\"></textarea>\n    \n    <label style=\"font-size:12px;font-weight:600;color:var(--t2);display:block;margin:12px 0 6px\">Type</label>\n    <select id=\"project-type\" style=\"width:100%;padding:12px;background:var(--bg4);border:1px solid var(--line2);border-radius:10px;color:var(--t);font-family:inherit\">\n      <option value=\"book\">📚 Écriture de livre</option>\n      <option value=\"web\">💻 Développement web</option>\n      <option value=\"business\">📊 Business / Marketing</option>\n      <option value=\"design\">🎨 Design</option>\n      <option value=\"other\">✨ Autre</option>\n    </select>\n    \n    <div class=\"modal-actions\">\n      <button class=\"btn-cancel\" onclick=\"closeProjectModal()\">Annuler</button>\n      <button class=\"btn-primary\" onclick=\"saveProject()\">Créer</button>\n    </div>\n  </div>\n</div>\n\n<!-- Toast -->\n<div class=\"toast\" id=\"toast\"></div>\n\n<script>\n// STATE\nlet API = '/api';\nlet token = localStorage.getItem('nyxia_token') || '';\nlet user = null;\nlet messages = [];\nlet typingTimer = null;\nlet currentEditingMsg = null;\nlet projects = JSON.parse(localStorage.getItem('nyxia_projects') || '[]');\nlet knowledgeBase = JSON.parse(localStorage.getItem('nyxia_knowledge') || '[]');\nlet speechSynthesis = window.speechSynthesis;\nlet currentUtterance = null;\nlet isSpeaking = false;\nlet attachedFile = null;\nlet attachedFileData = null;\n\n// LOGIN\nasync function doLogin() {\n  const email = document.getElementById('login-email').value.trim();\n  const pass = document.getElementById('login-pass').value;\n  const btn = document.getElementById('login-btn');\n  const err = document.getElementById('login-err');\n  \n  if (!email || !pass) {\n    err.textContent = 'Remplis tous les champs';\n    return;\n  }\n  \n  btn.disabled = true;\n  btn.textContent = 'Connexion...';\n  err.textContent = '';\n  \n  try {\n    const res = await fetch(`${API}/auth/login`, {\n      method: 'POST',\n      headers: { 'Content-Type': 'application/json' },\n      body: JSON.stringify({ email, password: pass })\n    });\n    \n    const data = await res.json();\n    \n    if (data.success) {\n      token = data.token;\n      user = data.user;\n      localStorage.setItem('nyxia_token', token);\n      showShell();\n    } else {\n      err.textContent = data.message || 'Erreur de connexion';\n    }\n  } catch (e) {\n    err.textContent = 'Erreur réseau';\n  }\n  \n  btn.disabled = false;\n  btn.textContent = 'Connexion';\n}\n\n// GOOGLE LOGIN\nconst GOOGLE_CLIENT_ID = '1060228283193-8m6b1j7h4s0r9vqkp5u3e2i1o0n4m6l5.apps.googleusercontent.com';\nconst GOOGLE_REDIRECT_URI = 'https://nyxia.top/api/auth/google/callback';\n\nfunction loginWithGoogle() {\n  const btn = document.getElementById('google-login-btn');\n  const err = document.getElementById('login-err');\n  \n  btn.disabled = true;\n  btn.innerHTML = '<span style=\"animation:spin 1s linear infinite\">⏳</span> Connexion Google...';\n  err.textContent = '';\n  \n  const state = Math.random().toString(36).substring(2, 15);\n  sessionStorage.setItem('google_oauth_state', state);\n  \n  const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');\n  authUrl.searchParams.set('client_id', GOOGLE_CLIENT_ID);\n  authUrl.searchParams.set('redirect_uri', GOOGLE_REDIRECT_URI);\n  authUrl.searchParams.set('response_type', 'code');\n  authUrl.searchParams.set('scope', 'email profile https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/drive.file');\n  authUrl.searchParams.set('state', state);\n  authUrl.searchParams.set('access_type', 'offline');\n  authUrl.searchParams.set('prompt', 'consent');\n  \n  window.location.href = authUrl.toString();\n}\n\nasync function handleGoogleCallback() {\n  const urlParams = new URLSearchParams(window.location.search);\n  const code = urlParams.get('code');\n  const state = urlParams.get('state');\n  const storedState = sessionStorage.getItem('google_oauth_state');\n  \n  if (code && state === storedState) {\n    sessionStorage.removeItem('google_oauth_state');\n    \n    document.getElementById('login-screen').style.display = 'flex';\n    document.getElementById('login-err').textContent = 'Connexion en cours...';\n    \n    try {\n      const res = await fetch(`${API}/auth/google`, {\n        method: 'POST',\n        headers: { 'Content-Type': 'application/json' },\n        body: JSON.stringify({ code })\n      });\n      \n      const data = await res.json();\n      \n      if (data.success) {\n        token = data.token;\n        user = data.user;\n        localStorage.setItem('nyxia_token', token);\n        \n        if (data.googleTokens) {\n          localStorage.setItem('google_access_token', data.googleTokens.access_token);\n          localStorage.setItem('google_refresh_token', data.googleTokens.refresh_token);\n          integrations.google = { \n            connected: true, \n            connectedAt: new Date().toISOString(),\n            email: data.user.email \n          };\n          localStorage.setItem('nyxia_integrations', JSON.stringify(integrations));\n        }\n        \n        window.history.replaceState({}, document.title, window.location.pathname);\n        showShell();\n      } else {\n        document.getElementById('login-err').textContent = data.message || 'Erreur de connexion Google';\n      }\n    } catch (e) {\n      document.getElementById('login-err').textContent = 'Erreur réseau lors de la connexion Google';\n    }\n  }\n}\n\nconst spinStyle = document.createElement('style');\nspinStyle.textContent = '@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }';\ndocument.head.appendChild(spinStyle);\n\n// INIT\nasync function init() {\n  const urlParams = new URLSearchParams(window.location.search);\n  if (urlParams.get('code') && urlParams.get('state')) {\n    await handleGoogleCallback();\n    return;\n  }\n  \n  if (!token) return;\n  \n  try {\n    const res = await fetch(`${API}/status`, {\n      headers: { 'Authorization': `Bearer ${token}` }\n    });\n    \n    if (res.ok) {\n      user = { name: 'Diane', email: 'dianeboyer@publication-web.com' };\n      showShell();\n      loadProjects();\n      loadKnowledge();\n    }\n  } catch (e) {}\n}\n\nfunction showShell() {\n  document.getElementById('login-screen').style.display = 'none';\n  document.getElementById('shell').style.display = 'flex';\n  \n  if (user) {\n    document.getElementById('sb-uname').textContent = user.name || user.email;\n    document.getElementById('sb-avatar').textContent = (user.name || user.email)[0].toUpperCase();\n    document.getElementById('topbar-badge').textContent = user.name || 'User';\n    document.getElementById('account-name').value = user.name || '';\n    document.getElementById('account-email').value = user.email || '';\n  }\n}\n\nfunction showPanel(panelId) {\n  document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active'));\n  document.getElementById(`panel-${panelId}`).classList.add('active');\n  \n  document.querySelectorAll('.sb-item').forEach(el => el.classList.remove('active'));\n  event?.target?.closest('.sb-item')?.classList.add('active');\n  \n  const titles = {\n    chat: '💬 Chat avec NyXia',\n    projects: '📁 Projets',\n    knowledge: '📖 Base de connaissance',\n    integrations: '🔗 Intégrations',\n    tokens: '🔑 Tokens & Secrets',\n    account: '🔐 Mon compte'\n  };\n  document.getElementById('topbar-title').textContent = titles[panelId] || 'NyXia';\n  \n  if (panelId === 'tokens') {\n    loadTokenStatus();\n  }\n}\n\n// CHAT\nfunction autoResize(el) {\n  el.style.height = 'auto';\n  el.style.height = Math.min(el.scrollHeight, 180) + 'px';\n}\n\nfunction onKey(e) {\n  if (e.key === 'Enter' && !e.shiftKey) {\n    e.preventDefault();\n    send();\n  }\n}\n\n// FILE HANDLING\nfunction handleFileSelect(input) {\n  const file = input.files[0];\n  if (!file) return;\n  \n  attachedFile = file;\n  \n  const previewArea = document.getElementById('file-preview-area');\n  const previewContent = document.getElementById('file-preview-content');\n  \n  if (file.size > 10 * 1024 * 1024) {\n    showToast('Fichier trop volumineux (max 10MB)', true);\n    input.value = '';\n    return;\n  }\n  \n  const ext = file.name.split('.').pop().toLowerCase();\n  const isImage = ['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(ext);\n  const isPDF = ext === 'pdf';\n  const isZIP = ext === 'zip';\n  \n  if (!isImage && !isPDF && !isZIP) {\n    showToast('Format non supporté. Utilise PDF, Image ou ZIP', true);\n    input.value = '';\n    return;\n  }\n  \n  const reader = new FileReader();\n  reader.onload = (e) => {\n    attachedFileData = e.target.result;\n    const icon = isImage ? '📷' : (isPDF ? '📄' : '📦');\n    previewContent.innerHTML = `\n      <div style=\"display:flex;align-items:center;gap:12px\">\n        <div style=\"font-size:24px\">${icon}</div>\n        <div>\n          <div style=\"font-size:14px;font-weight:600;color:var(--t)\">${file.name}</div>\n          <div style=\"font-size:12px;color:var(--t3)\">${formatFileSize(file.size)}</div>\n        </div>\n      </div>\n    `;\n    previewArea.style.display = 'block';\n  };\n  reader.readAsDataURL(file);\n  input.value = '';\n}\n\nfunction clearAttachedFile() {\n  attachedFile = null;\n  attachedFileData = null;\n  document.getElementById('file-preview-area').style.display = 'none';\n  document.getElementById('file-preview-content').innerHTML = '';\n}\n\nfunction formatFileSize(bytes) {\n  if (bytes < 1024) return bytes + ' B';\n  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';\n  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';\n}\n\nasync function send() {\n  const input = document.getElementById('msg-input');\n  const text = input.value.trim();\n  \n  if (!text && !attachedFile) return;\n  \n  input.value = '';\n  input.style.height = 'auto';\n  \n  let displayText = text;\n  if (attachedFile) {\n    const ext = attachedFile.name.split('.').pop().toLowerCase();\n    const isImage = ['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(ext);\n    const icon = isImage ? '📷' : (ext === 'pdf' ? '📄' : '📦');\n    displayText = text ? `${icon} ${attachedFile.name}\\n\\n${text}` : `${icon} ${attachedFile.name}`;\n  }\n  \n  addMessage('user', displayText);\n  document.getElementById('welcome-screen').style.display = 'none';\n  \n  showTyping();\n  \n  if (attachedFile && attachedFileData) {\n    try {\n      const fileExt = attachedFile.name.split('.').pop().toLowerCase();\n      \n      const res = await fetch(`${API}/analyze/file`, {\n        method: 'POST',\n        headers: {\n          'Content-Type': 'application/json',\n          'Authorization': `Bearer ${token}`\n        },\n        body: JSON.stringify({\n          fileName: attachedFile.name,\n          fileData: attachedFileData,\n          fileType: fileExt,\n          userMessage: text,\n          messages: messages\n        })\n      });\n      \n      const data = await res.json();\n      hideTyping();\n      \n      if (data.content) {\n        addMessage('nyxia', data.content);\n        messages.push({ role: 'user', content: displayText });\n        messages.push({ role: 'assistant', content: data.content });\n      } else if (data.error) {\n        addMessage('nyxia', `⚠️ ${data.error}`);\n      }\n      \n      clearAttachedFile();\n      \n    } catch (e) {\n      hideTyping();\n      addMessage('nyxia', '⚠️ Erreur lors de l\\'analyse du fichier. Réessaie...');\n      clearAttachedFile();\n    }\n    return;\n  }\n  \n  messages.push({ role: 'user', content: text });\n  \n  try {\n    const res = await fetch(`${API}/chat`, {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n        'Authorization': `Bearer ${token}`\n      },\n      body: JSON.stringify({ messages })\n    });\n    \n    const data = await res.json();\n    hideTyping();\n    \n    if (data.content) {\n      addMessage('nyxia', data.content);\n      messages.push({ role: 'assistant', content: data.content });\n    } else if (data.error) {\n      addMessage('nyxia', `⚠️ ${data.error}`);\n    }\n  } catch (e) {\n    hideTyping();\n    addMessage('nyxia', '⚠️ Erreur de connexion. Réessaie...');\n  }\n}\n\nfunction addMessage(role, content) {\n  const zone = document.getElementById('chat-zone');\n  const typing = document.getElementById('typing');\n  \n  const row = document.createElement('div');\n  row.className = `msg-row ${role === 'user' ? 'user' : ''}`;\n  \n  const avatar = role === 'user' \n    ? `<div class=\"msg-avatar user-av\">${(user?.name || 'D')[0]}</div>`\n    : `<div class=\"msg-avatar nyxia\"><img src=\"https://nyxiapublicationweb.com/NyXia.png\"></div>`;\n  \n  let actionsHtml = '';\n  if (role === 'nyxia') {\n    actionsHtml = `\n      <div class=\"msg-actions\">\n        <button class=\"action-btn\" onclick=\"copyText(this)\">📋 Copier</button>\n        <button class=\"action-btn\" onclick=\"speakText(this)\">🔊 Écouter</button>\n      </div>`;\n  }\n  \n  row.innerHTML = `\n    ${avatar}\n    <div class=\"msg-content\">\n      <div class=\"msg-bubble ${role === 'user' ? 'user' : 'nyxia'}\">${formatContent(content)}</div>\n      ${actionsHtml}\n      <div class=\"msg-time\">${new Date().toLocaleTimeString('fr-CA', {hour:'2-digit', minute:'2-digit'})}</div>\n    </div>\n  `;\n  \n  zone.insertBefore(row, typing);\n  zone.scrollTop = zone.scrollHeight;\n}\n\nfunction formatContent(text) {\n  return text\n    .replace(/```(\\w*)\\n?([\\s\\S]*?)```/g, '<pre><code>$2</code></pre>')\n    .replace(/`([^`]+)`/g, '<code>$1</code>')\n    .replace(/\\*\\*([^*]+)\\*\\*/g, '<strong>$1</strong>')\n    .replace(/\\n/g, '<br>');\n}\n\nfunction copyText(btn) {\n  const content = btn.closest('.msg-content').querySelector('.msg-bubble').textContent;\n  navigator.clipboard.writeText(content).then(() => {\n    btn.classList.add('copied');\n    btn.textContent = '✓ Copié!';\n    setTimeout(() => {\n      btn.classList.remove('copied');\n      btn.textContent = '📋 Copier';\n    }, 1500);\n  });\n}\n\nfunction speakText(btn) {\n  const content = btn.closest('.msg-content').querySelector('.msg-bubble').textContent;\n  \n  if (isSpeaking) {\n    speechSynthesis.cancel();\n    isSpeaking = false;\n    btn.classList.remove('speaking');\n    btn.textContent = '🔊 Écouter';\n    return;\n  }\n  \n  const cleanText = content.replace(/```[\\s\\S]*?```/g, 'code').replace(/`[^`]+`/g, 'code').replace(/[#*_`]/g, '').replace(/\\n+/g, '. ').substring(0, 5000);\n  \n  currentUtterance = new SpeechSynthesisUtterance(cleanText);\n  currentUtterance.lang = 'fr-FR';\n  currentUtterance.rate = 1;\n  \n  currentUtterance.onend = () => {\n    isSpeaking = false;\n    btn.classList.remove('speaking');\n    btn.textContent = '🔊 Écouter';\n  };\n  \n  speechSynthesis.speak(currentUtterance);\n  isSpeaking = true;\n  btn.classList.add('speaking');\n  btn.textContent = '⏹ Arrêter';\n}\n\nfunction showTyping() {\n  const el = document.getElementById('typing');\n  el.classList.add('show');\n  \n  let seconds = 0;\n  typingTimer = setInterval(() => {\n    seconds++;\n    document.getElementById('typing-timer').textContent = seconds + 's';\n  }, 1000);\n}\n\nfunction hideTyping() {\n  document.getElementById('typing').classList.remove('show');\n  if (typingTimer) clearInterval(typingTimer);\n  document.getElementById('typing-timer').textContent = '';\n}\n\n// PROJECTS\nfunction loadProjects() {\n  const grid = document.getElementById('projects-grid');\n  grid.innerHTML = '';\n  \n  projects.forEach((project, index) => {\n    const card = document.createElement('div');\n    card.className = 'project-card';\n    card.innerHTML = `\n      <h4>${getProjectIcon(project.type)} ${project.name}</h4>\n      <p>${project.description}</p>\n      <div class=\"project-meta\">\n        <span class=\"project-tag\">${project.type}</span>\n        <span>Créé ${new Date(project.created).toLocaleDateString('fr-CA')}</span>\n      </div>\n    `;\n    card.onclick = () => openProject(index);\n    grid.appendChild(card);\n  });\n  \n  const addBtn = document.createElement('div');\n  addBtn.className = 'add-project-card';\n  addBtn.onclick = createProject;\n  addBtn.innerHTML = '<div class=\"icon\">✦</div><span>Créer un nouveau projet</span>';\n  grid.appendChild(addBtn);\n}\n\nfunction getProjectIcon(type) {\n  const icons = { book: '📚', web: '💻', business: '📊', design: '🎨', other: '✨' };\n  return icons[type] || '✨';\n}\n\nfunction createProject() {\n  document.getElementById('project-modal').classList.add('open');\n}\n\nfunction closeProjectModal() {\n  document.getElementById('project-modal').classList.remove('open');\n}\n\nfunction saveProject() {\n  const name = document.getElementById('project-name').value.trim();\n  const desc = document.getElementById('project-desc').value.trim();\n  const type = document.getElementById('project-type').value;\n  \n  if (!name) {\n    showToast('Donne un nom au projet', true);\n    return;\n  }\n  \n  projects.push({\n    name,\n    description: desc,\n    type,\n    created: new Date().toISOString(),\n    conversations: []\n  });\n  \n  localStorage.setItem('nyxia_projects', JSON.stringify(projects));\n  loadProjects();\n  closeProjectModal();\n  showToast('Projet créé!');\n  \n  document.getElementById('project-name').value = '';\n  document.getElementById('project-desc').value = '';\n}\n\nfunction openProject(index) {\n  const project = projects[index];\n  showPanel('chat');\n  document.getElementById('msg-input').value = `Travaillons sur le projet \"${project.name}\": ${project.description}`;\n  document.getElementById('msg-input').focus();\n}\n\n// KNOWLEDGE BASE\nfunction loadKnowledge() {\n  const container = document.getElementById('kb-books');\n  container.innerHTML = '';\n  \n  let totalWords = 0;\n  \n  knowledgeBase.forEach((book, index) => {\n    totalWords += book.wordCount || 0;\n    \n    const el = document.createElement('div');\n    el.className = 'kb-book';\n    el.innerHTML = `\n      <div class=\"kb-book-icon\">📖</div>\n      <div class=\"kb-book-info\">\n        <h4>${book.name}</h4>\n        <p>${book.description || 'Ajouté à la base de connaissance'}</p>\n        <div class=\"kb-book-meta\">\n          <span>${book.wordCount || 0} mots</span>\n          <span>${new Date(book.added).toLocaleDateString('fr-CA')}</span>\n        </div>\n      </div>\n    `;\n    container.appendChild(el);\n  });\n  \n  document.getElementById('kb-books-count').textContent = knowledgeBase.length;\n  document.getElementById('kb-words-count').textContent = totalWords.toLocaleString();\n}\n\nfunction uploadKnowledge(input) {\n  const file = input.files[0];\n  if (!file) return;\n  \n  const reader = new FileReader();\n  reader.onload = (e) => {\n    const content = e.target.result;\n    const wordCount = content.split(/\\s+/).length;\n    \n    knowledgeBase.push({\n      name: file.name.replace(/\\.[^/.]+$/, ''),\n      content: content,\n      wordCount: wordCount,\n      added: new Date().toISOString()\n    });\n    \n    localStorage.setItem('nyxia_knowledge', JSON.stringify(knowledgeBase));\n    loadKnowledge();\n    showToast(`\"${file.name}\" ajouté à la base de connaissance!`);\n  };\n  \n  reader.readAsText(file);\n  input.value = '';\n}\n\n// INTEGRATIONS\nlet integrations = JSON.parse(localStorage.getItem('nyxia_integrations') || '{}');\n\nfunction connectGoogle() {\n  showToast('Redirection vers Google...');\n  \n  const state = Math.random().toString(36).substring(2, 15);\n  sessionStorage.setItem('google_oauth_state', state);\n  \n  const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');\n  authUrl.searchParams.set('client_id', GOOGLE_CLIENT_ID);\n  authUrl.searchParams.set('redirect_uri', GOOGLE_REDIRECT_URI);\n  authUrl.searchParams.set('response_type', 'code');\n  authUrl.searchParams.set('scope', 'email profile https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets');\n  authUrl.searchParams.set('state', state);\n  authUrl.searchParams.set('access_type', 'offline');\n  authUrl.searchParams.set('prompt', 'consent');\n  \n  window.location.href = authUrl.toString();\n}\n\nfunction disconnectGoogle() {\n  if (confirm('Déconnecter Google Workspace?')) {\n    document.getElementById('google-status').textContent = 'Non connecté';\n    document.getElementById('google-status').classList.remove('connected');\n    document.getElementById('google-status').classList.add('disconnected');\n    integrations.google = null;\n    localStorage.removeItem('google_access_token');\n    localStorage.removeItem('google_refresh_token');\n    localStorage.setItem('nyxia_integrations', JSON.stringify(integrations));\n    showToast('Google Workspace déconnecté');\n  }\n}\n\nfunction configureManyChat() {\n  showPanel('chat');\n  document.getElementById('msg-input').value = 'Configure ManyChat. Quelles sont mes options?';\n  document.getElementById('msg-input').focus();\n}\n\nfunction disconnectManyChat() {\n  if (confirm('Déconnecter ManyChat?')) {\n    document.getElementById('manychat-status').textContent = 'Non connecté';\n    document.getElementById('manychat-status').classList.remove('connected');\n    document.getElementById('manychat-status').classList.add('disconnected');\n    integrations.manychat = null;\n    localStorage.setItem('nyxia_integrations', JSON.stringify(integrations));\n    showToast('ManyChat déconnecté');\n  }\n}\n\nfunction configureZapier() {\n  showPanel('chat');\n  document.getElementById('msg-input').value = 'Guide-moi pour configurer Zapier avec mes webhooks.';\n  document.getElementById('msg-input').focus();\n}\n\nfunction disconnectZapier() {\n  if (confirm('Déconnecter Zapier?')) {\n    document.getElementById('zapier-status').textContent = 'Non connecté';\n    document.getElementById('zapier-status').classList.remove('connected');\n    document.getElementById('zapier-status').classList.add('disconnected');\n    integrations.zapier = null;\n    localStorage.setItem('nyxia_integrations', JSON.stringify(integrations));\n    showToast('Zapier déconnecté');\n  }\n}\n\nfunction configureSysteme() {\n  showPanel('chat');\n  document.getElementById('msg-input').value = 'Configure Systeme.io. Montre-moi mes contacts et tags.';\n  document.getElementById('msg-input').focus();\n}\n\nfunction disconnectSysteme() {\n  if (confirm('Déconnecter Systeme.io?')) {\n    document.getElementById('systeme-status').textContent = 'Non connecté';\n    document.getElementById('systeme-status').classList.remove('connected');\n    document.getElementById('systeme-status').classList.add('disconnected');\n    integrations.systeme = null;\n    localStorage.setItem('nyxia_integrations', JSON.stringify(integrations));\n    showToast('Systeme.io déconnecté');\n  }\n}\n\n// TOKENS\nasync function loadTokenStatus() {\n  const tokens = ['openrouter', 'github', 'cloudflare', 'manychat', 'systeme'];\n  \n  for (const tokenName of tokens) {\n    try {\n      const res = await fetch(`${API}/tokens/status/${tokenName}`, {\n        headers: { 'Authorization': `Bearer ${token}` }\n      });\n      const data = await res.json();\n      \n      const statusEl = document.getElementById(`${tokenName}-token-status`);\n      if (statusEl) {\n        if (data.configured) {\n          statusEl.textContent = '✓ Configuré';\n          statusEl.classList.remove('disconnected');\n          statusEl.classList.add('connected');\n        } else {\n          statusEl.textContent = 'Non configuré';\n          statusEl.classList.remove('connected');\n          statusEl.classList.add('disconnected');\n        }\n      }\n    } catch (e) {\n      const statusEl = document.getElementById(`${tokenName}-token-status`);\n      if (statusEl) {\n        statusEl.textContent = 'Non configuré';\n        statusEl.classList.add('disconnected');\n      }\n    }\n  }\n}\n\nasync function saveToken(type) {\n  let value = '';\n  let extra = {};\n  \n  switch (type) {\n    case 'openrouter':\n      value = document.getElementById('token-openrouter').value.trim();\n      break;\n    case 'github':\n      value = document.getElementById('token-github').value.trim();\n      extra.owner = document.getElementById('token-github-owner').value.trim();\n      break;\n    case 'cloudflare':\n      value = document.getElementById('token-cloudflare').value.trim();\n      extra.accountId = document.getElementById('token-cloudflare-account').value.trim();\n      break;\n    case 'manychat':\n      value = document.getElementById('token-manychat').value.trim();\n      break;\n    case 'systeme':\n      value = document.getElementById('token-systeme').value.trim();\n      break;\n  }\n  \n  if (!value) {\n    showToast('Entre une valeur pour le token', true);\n    return;\n  }\n  \n  try {\n    const res = await fetch(`${API}/tokens/save`, {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n        'Authorization': `Bearer ${token}`\n      },\n      body: JSON.stringify({ type, value, ...extra })\n    });\n    \n    const data = await res.json();\n    \n    if (data.success) {\n      showToast(`${type} configuré! 🔒`);\n      \n      const statusEl = document.getElementById(`${type}-token-status`);\n      if (statusEl) {\n        statusEl.textContent = '✓ Configuré';\n        statusEl.classList.remove('disconnected');\n        statusEl.classList.add('connected');\n      }\n      \n      const inputEl = document.getElementById(`token-${type}`);\n      if (inputEl) inputEl.value = '';\n      \n    } else {\n      showToast(data.error || 'Erreur', true);\n    }\n  } catch (e) {\n    showToast('Erreur de connexion', true);\n  }\n}\n\n// ACCOUNT\nfunction saveAccountInfo() {\n  const name = document.getElementById('account-name').value.trim();\n  const email = document.getElementById('account-email').value.trim();\n  \n  if (user) {\n    user.name = name;\n    user.email = email;\n    document.getElementById('sb-uname').textContent = name;\n    document.getElementById('sb-avatar').textContent = name[0].toUpperCase();\n    document.getElementById('topbar-badge').textContent = name;\n  }\n  \n  showToast('Informations sauvegardées!');\n}\n\nasync function changePassword() {\n  const current = document.getElementById('current-password').value;\n  const newPass = document.getElementById('new-password').value;\n  const confirm = document.getElementById('confirm-password').value;\n  \n  if (!current || !newPass || !confirm) {\n    showToast('Remplis tous les champs', true);\n    return;\n  }\n  \n  if (newPass !== confirm) {\n    showToast('Les mots de passe ne correspondent pas', true);\n    return;\n  }\n  \n  if (newPass.length < 8) {\n    showToast('Le mot de passe doit avoir au moins 8 caractères', true);\n    return;\n  }\n  \n  showToast('Mot de passe changé avec succès!');\n  \n  document.getElementById('current-password').value = '';\n  document.getElementById('new-password').value = '';\n  document.getElementById('confirm-password').value = '';\n}\n\nfunction clearAllData() {\n  if (!confirm('Es-tu sûre? Toutes tes données seront effacées définitivement.')) return;\n  if (!confirm('Cette action est IRRÉVERSIBLE. Confirmer?')) return;\n  \n  localStorage.removeItem('nyxia_token');\n  localStorage.removeItem('nyxia_projects');\n  localStorage.removeItem('nyxia_knowledge');\n  \n  showToast('Toutes les données effacées');\n  setTimeout(() => location.reload(), 1000);\n}\n\n// SIDEBAR\nfunction toggleSidebar() {\n  document.getElementById('sidebar').classList.toggle('collapsed');\n}\n\nfunction newConversation() {\n  messages = [];\n  const zone = document.getElementById('chat-zone');\n  zone.innerHTML = `\n    <div class=\"welcome\" id=\"welcome-screen\">\n      <div class=\"welcome-icon\">✦</div>\n      <h2>Bonjour Diane!</h2>\n      <p>Je suis NyXia, ton agente IA. Je suis tellement contente de te revoir! Ça fait plaisir de travailler avec toi encore aujourd'hui. Qu'est-ce qu'on crée ensemble?</p>\n      <div class=\"suggestions\">\n        <button class=\"suggest-btn\" onclick=\"useSuggestion(this)\">📝 Continuons mon livre, on s'était arrêtés au chapitre...</button>\n        <button class=\"suggest-btn\" onclick=\"useSuggestion(this)\">💻 Pousse le code sur GitHub pour le projet</button>\n        <button class=\"suggest-btn\" onclick=\"useSuggestion(this)\">🚀 Déploie les modifications sur Cloudflare</button>\n        <button class=\"suggest-btn\" onclick=\"useSuggestion(this)\">📊 Aide-moi à planifier mes projets de la semaine</button>\n      </div>\n    </div>\n    <div class=\"typing-indicator\" id=\"typing\">\n      <div class=\"msg-avatar nyxia\"><img src=\"https://nyxiapublicationweb.com/NyXia.png\"></div>\n      <div class=\"typing-dots\"><span></span><span></span><span></span><span class=\"typing-timer\" id=\"typing-timer\"></span></div>\n    </div>\n  `;\n  showPanel('chat');\n}\n\nfunction useSuggestion(btn) {\n  document.getElementById('msg-input').value = btn.textContent.substring(2).trim();\n  document.getElementById('msg-input').focus();\n}\n\nfunction doLogout() {\n  localStorage.removeItem('nyxia_token');\n  location.reload();\n}\n\n// MODALS\nfunction openConfig() {\n  document.getElementById('config-panel').classList.add('open');\n}\n\nfunction closeConfig() {\n  document.getElementById('config-panel').classList.remove('open');\n}\n\nasync function saveConfig() {\n  const openrouter = document.getElementById('config-openrouter').value;\n  const github = document.getElementById('config-github').value;\n  const githubOwner = document.getElementById('config-github-owner').value;\n  const cfToken = document.getElementById('config-cf-token').value;\n  const cfAccount = document.getElementById('config-cf-account').value;\n  \n  if (openrouter) {\n    await fetch(`${API}/config/openrouter`, {\n      method: 'POST',\n      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },\n      body: JSON.stringify({ apiKey: openrouter })\n    });\n  }\n  \n  if (github || githubOwner) {\n    await fetch(`${API}/config/github`, {\n      method: 'POST',\n      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },\n      body: JSON.stringify({ token: github, owner: githubOwner })\n    });\n  }\n  \n  if (cfToken && cfAccount) {\n    await fetch(`${API}/config/cloudflare`, {\n      method: 'POST',\n      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },\n      body: JSON.stringify({ apiToken: cfToken, accountId: cfAccount })\n    });\n  }\n  \n  closeConfig();\n  showToast('Configuration sauvegardée!');\n}\n\nasync function openBooks() {\n  document.getElementById('books-panel').classList.add('open');\n}\n\nfunction closeBooks() {\n  document.getElementById('books-panel').classList.remove('open');\n}\n\nfunction createNewBook() {\n  closeBooks();\n  document.getElementById('msg-input').value = 'Je veux commencer un nouveau livre avec toi. Aide-moi à le structurer.';\n  document.getElementById('msg-input').focus();\n}\n\nasync function openMemory() {\n  document.getElementById('memory-panel').classList.add('open');\n}\n\nfunction closeMemory() {\n  document.getElementById('memory-panel').classList.remove('open');\n}\n\n// TOAST\nfunction showToast(msg, isError = false) {\n  const toast = document.getElementById('toast');\n  toast.textContent = msg;\n  toast.className = 'toast show' + (isError ? ' error' : '');\n  setTimeout(() => toast.classList.remove('show'), 3000);\n}\n\n// INIT\ndocument.addEventListener('DOMContentLoaded', init);\n</script>\n</body>\n</html>\n";
 
+// CORS HEADERS
 const cors = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS"
 };
 
-// Complete Dashboard HTML with beautiful login
-const DASHBOARD_HTML = `<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NyXia V3</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',system-ui;background:linear-gradient(135deg,#0a0b12 0%,#1a1b2e 50%,#0a0b12 100%);color:#e2e8f0;min-height:100vh}
-::-webkit-scrollbar{width:8px}
-::-webkit-scrollbar-track{background:#1a1b2e}
-::-webkit-scrollbar-thumb{background:#4a4a6a;border-radius:4px}
-
-/* Login Screen */
-.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at top,#1a1b2e 0%,#0a0b12 70%)}
-.login-container{width:100%;max-width:420px;animation:fadeIn 0.5s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.login-logo{text-align:center;margin-bottom:40px}
-.login-logo h1{font-size:48px;font-weight:700;background:linear-gradient(135deg,#a78bfa,#f472b6,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
-.login-logo p{color:#64748b;font-size:14px}
-.login-card{background:rgba(30,32,50,0.8);backdrop-filter:blur(20px);border-radius:24px;padding:40px;border:1px solid rgba(167,139,250,0.2);box-shadow:0 25px 50px -12px rgba(0,0,0,0.5)}
-.login-card h2{font-size:24px;font-weight:600;margin-bottom:8px;text-align:center}
-.login-card .subtitle{text-align:center;color:#64748b;margin-bottom:32px}
-.form-group{margin-bottom:20px}
-.form-group label{display:block;font-size:13px;font-weight:500;color:#94a3b8;margin-bottom:8px}
-.form-group input{width:100%;padding:14px 18px;background:rgba(15,16,26,0.8);border:1px solid rgba(100,116,139,0.3);border-radius:12px;color:#e2e8f0;font-size:15px;transition:all 0.3s}
-.form-group input:focus{outline:none;border-color:#a78bfa;box-shadow:0 0 0 3px rgba(167,139,250,0.2)}
-.form-group input::placeholder{color:#4a5568}
-.btn-primary{width:100%;padding:14px;background:linear-gradient(135deg,#a78bfa,#8b5cf6);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.3s}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(167,139,250,0.4)}
-.btn-primary:active{transform:translateY(0)}
-.error-msg{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#f87171;padding:12px 16px;border-radius:10px;font-size:14px;margin-top:16px;display:none;text-align:center}
-.login-footer{text-align:center;margin-top:24px;color:#64748b;font-size:13px}
-.login-footer a{color:#a78bfa;text-decoration:none}
-
-/* Dashboard */
-.dashboard{display:none;min-height:100vh}
-.dashboard.active{display:flex}
-.sidebar{width:280px;background:rgba(20,22,35,0.95);border-right:1px solid rgba(100,116,139,0.2);padding:20px 0;position:fixed;height:100vh;overflow-y:auto}
-.sidebar-header{padding:0 20px 20px;border-bottom:1px solid rgba(100,116,139,0.2);margin-bottom:20px}
-.sidebar-header h1{font-size:28px;font-weight:700;background:linear-gradient(135deg,#a78bfa,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.sidebar-header .version{font-size:12px;color:#64748b;margin-top:4px}
-.nav-section{padding:0 12px;margin-bottom:20px}
-.nav-section-title{font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:1px;padding:0 12px;margin-bottom:8px}
-.nav-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;cursor:pointer;transition:all 0.2s;color:#94a3b8;font-size:14px}
-.nav-item:hover{background:rgba(167,139,250,0.1);color:#e2e8f0}
-.nav-item.active{background:linear-gradient(135deg,rgba(167,139,250,0.2),rgba(244,114,182,0.1));color:#a78bfa;border-left:3px solid #a78bfa}
-.nav-item svg{width:20px;height:20px}
-.user-section{position:absolute;bottom:0;left:0;right:0;padding:20px;border-top:1px solid rgba(100,116,139,0.2);background:rgba(20,22,35,0.95)}
-.user-info{display:flex;align-items:center;gap:12px}
-.user-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#f472b6);display:flex;align-items:center;justify-content:center;font-weight:600}
-.user-details{flex:1}
-.user-name{font-size:14px;font-weight:500}
-.user-email{font-size:12px;color:#64748b}
-.logout-btn{background:none;border:none;color:#64748b;cursor:pointer;padding:8px;border-radius:8px}
-.logout-btn:hover{background:rgba(239,68,68,0.1);color:#f87171}
-
-.main-content{flex:1;margin-left:280px;padding:24px;min-height:100vh}
-.content-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
-.content-header h2{font-size:24px;font-weight:600}
-
-/* Chat Panel */
-.chat-container{display:flex;flex-direction:column;height:calc(100vh - 120px);background:rgba(20,22,35,0.6);border-radius:20px;border:1px solid rgba(100,116,139,0.2);overflow:hidden}
-.chat-messages{flex:1;overflow-y:auto;padding:24px}
-.message{max-width:80%;margin-bottom:16px;animation:msgIn 0.3s ease}
-@keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.message.user{margin-left:auto}
-.message-bubble{padding:14px 18px;border-radius:16px;line-height:1.5}
-.message.user .message-bubble{background:linear-gradient(135deg,#a78bfa,#8b5cf6);color:#fff;border-bottom-right-radius:4px}
-.message.assistant .message-bubble{background:rgba(40,42,60,0.8);color:#e2e8f0;border-bottom-left-radius:4px}
-.chat-input-area{padding:16px 24px;background:rgba(15,16,26,0.8);border-top:1px solid rgba(100,116,139,0.2)}
-.chat-input-wrapper{display:flex;gap:12px;align-items:flex-end}
-.chat-input{flex:1;background:rgba(30,32,50,0.8);border:1px solid rgba(100,116,139,0.3);border-radius:16px;padding:14px 18px;color:#e2e8f0;font-size:15px;resize:none;min-height:52px;max-height:150px}
-.chat-input:focus{outline:none;border-color:#a78bfa}
-.send-btn{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,#a78bfa,#8b5cf6);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s}
-.send-btn:hover{transform:scale(1.05)}
-.send-btn svg{width:24px;height:24px;color:#fff}
-.typing-indicator{display:none;padding:8px 16px;color:#64748b;font-size:14px}
-.typing-indicator.active{display:block}
-
-/* Model Selector */
-.model-selector-panel{padding:20px}
-.model-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:20px}
-.model-card{background:rgba(30,32,50,0.6);border:1px solid rgba(100,116,139,0.2);border-radius:16px;padding:20px;cursor:pointer;transition:all 0.3s}
-.model-card:hover{border-color:#a78bfa;transform:translateY(-2px)}
-.model-card.selected{border-color:#a78bfa;background:rgba(167,139,250,0.1);box-shadow:0 0 20px rgba(167,139,250,0.2)}
-.model-card h3{font-size:16px;font-weight:600;margin-bottom:8px}
-.model-card .provider{font-size:12px;color:#a78bfa;margin-bottom:8px}
-.model-card .description{font-size:13px;color:#94a3b8}
-.model-card .checkmark{display:none;position:absolute;top:12px;right:12px;width:24px;height:24px;background:#a78bfa;border-radius:50%;align-items:center;justify-content:center}
-.model-card.selected .checkmark{display:flex}
-.current-model{background:linear-gradient(135deg,rgba(167,139,250,0.2),rgba(244,114,182,0.1));border:1px solid rgba(167,139,250,0.3);border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:12px}
-.current-model-label{font-size:13px;color:#94a3b8}
-.current-model-name{font-size:16px;font-weight:600;color:#a78bfa}
-
-/* Other Panels */
-.panel{display:none;padding:20px}
-.panel.active{display:block}
-.empty-state{text-align:center;padding:60px 20px;color:#64748b}
-.empty-state svg{width:64px;height:64px;margin-bottom:16px;opacity:0.5}
-.empty-state h3{font-size:18px;font-weight:500;margin-bottom:8px;color:#94a3b8}
-
-/* Responsive */
-@media(max-width:768px){
-.sidebar{transform:translateX(-100%);z-index:100}
-.sidebar.open{transform:translateX(0)}
-.main-content{margin-left:0}
-.mobile-menu-btn{display:block}
-}
-</style>
-</head>
-<body>
-
-<!-- Login Screen -->
-<div class="login-screen" id="loginScreen">
-<div class="login-container">
-<div class="login-logo">
-<h1>NyXia</h1>
-<p>Ton assistante AI personnelle</p>
-</div>
-<div class="login-card">
-<h2>Bienvenue</h2>
-<p class="subtitle">Connecte-toi pour continuer</p>
-<div class="form-group">
-<label>Email</label>
-<input type="email" id="loginEmail" placeholder="ton@email.com">
-</div>
-<div class="form-group">
-<label>Mot de passe</label>
-<input type="password" id="loginPassword" placeholder="••••••••">
-</div>
-<button class="btn-primary" onclick="handleLogin()">Se connecter</button>
-<div class="error-msg" id="loginError"></div>
-<div class="login-footer">
-Version 3.2 • Propulse par OpenRouter
-</div>
-</div>
-</div>
-</div>
-
-<!-- Dashboard -->
-<div class="dashboard" id="dashboard">
-<div class="sidebar">
-<div class="sidebar-header">
-<h1>NyXia</h1>
-<div class="version">V3.2</div>
-</div>
-<div class="nav-section">
-<div class="nav-section-title">Principal</div>
-<div class="nav-item active" data-panel="chat" onclick="switchPanel('chat')">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-Chat
-</div>
-<div class="nav-item" data-panel="models" onclick="switchPanel('models')">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-Modeles
-</div>
-</div>
-<div class="nav-section">
-<div class="nav-section-title">Gestion</div>
-<div class="nav-item" data-panel="projects" onclick="switchPanel('projects')">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-Projets
-</div>
-<div class="nav-item" data-panel="knowledge" onclick="switchPanel('knowledge')">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-Base de connaissance
-</div>
-<div class="nav-item" data-panel="tokens" onclick="switchPanel('tokens')">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
-Tokens
-</div>
-<div class="nav-item" data-panel="memory" onclick="switchPanel('memory')">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>
-Memoire
-</div>
-</div>
-<div class="user-section">
-<div class="user-info">
-<div class="user-avatar" id="userAvatar">D</div>
-<div class="user-details">
-<div class="user-name" id="userName">Diane</div>
-<div class="user-email" id="userEmail">...</div>
-</div>
-<button class="logout-btn" onclick="handleLogout()" title="Deconnexion">
-<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-</button>
-</div>
-</div>
-</div>
-
-<div class="main-content">
-<!-- Chat Panel -->
-<div class="panel active" id="chatPanel">
-<div class="content-header">
-<h2>Chat avec NyXia</h2>
-<div class="current-model">
-<span class="current-model-label">Modele actuel:</span>
-<span class="current-model-name" id="currentModelDisplay">GLM-5</span>
-</div>
-</div>
-<div class="chat-container">
-<div class="chat-messages" id="chatMessages"></div>
-<div class="typing-indicator" id="typingIndicator">NyXia ecrit...</div>
-<div class="chat-input-area">
-<div class="chat-input-wrapper">
-<textarea class="chat-input" id="chatInput" placeholder="Ecris ton message..." rows="1" onkeydown="handleKeyDown(event)"></textarea>
-<button class="send-btn" onclick="sendMessage()">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-</button>
-</div>
-</div>
-</div>
-</div>
-
-<!-- Models Panel -->
-<div class="panel" id="modelsPanel">
-<div class="content-header">
-<h2>Selecteur de Modele</h2>
-</div>
-<div class="model-selector-panel">
-<div class="current-model">
-<span class="current-model-label">Modele actif:</span>
-<span class="current-model-name" id="currentModelName">GLM-5</span>
-</div>
-<div class="model-grid" id="modelGrid"></div>
-</div>
-</div>
-
-<!-- Projects Panel -->
-<div class="panel" id="projectsPanel">
-<div class="content-header">
-<h2>Projets</h2>
-</div>
-<div class="empty-state">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-<h3>Aucun projet</h3>
-<p>Creer ton premier projet pour commencer</p>
-</div>
-</div>
-
-<!-- Knowledge Panel -->
-<div class="panel" id="knowledgePanel">
-<div class="content-header">
-<h2>Base de Connaissance</h2>
-</div>
-<div class="empty-state">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-<h3>Base de connaissance vide</h3>
-<p>Ajoute des documents pour enrichir NyXia</p>
-</div>
-</div>
-
-<!-- Tokens Panel -->
-<div class="panel" id="tokensPanel">
-<div class="content-header">
-<h2>Tokens API</h2>
-</div>
-<div class="empty-state">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
-<h3>Gerer tes cles API</h3>
-<p>Configure tes tokens pour les services externes</p>
-</div>
-</div>
-
-<!-- Memory Panel -->
-<div class="panel" id="memoryPanel">
-<div class="content-header">
-<h2>Memoire</h2>
-</div>
-<div class="empty-state">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>
-<h3>Memoire de NyXia</h3>
-<p>Les conversations et preferences sont sauvegardees ici</p>
-</div>
-</div>
-</div>
-</div>
-
-<script>
-let token = localStorage.getItem('nx_tok') || '';
-let currentModel = localStorage.getItem('nx_model') || 'glm-5';
-let chatHistory = [];
-
-async function checkAuth() {
-  if (!token) {
-    showLogin();
-    return;
-  }
-  try {
-    const res = await fetch('/api/status', { headers: { 'Authorization': 'Bearer ' + token } });
-    if (res.ok) {
-      showDashboard();
-      loadModels();
-    } else {
-      showLogin();
-    }
-  } catch (e) {
-    showLogin();
-  }
-}
-
-function showLogin() {
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('dashboard').classList.remove('active');
-}
-
-function showDashboard() {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('dashboard').classList.add('active');
-}
-
-async function handleLogin() {
-  const email = document.getElementById('loginEmail').value;
-  const password = document.getElementById('loginPassword').value;
-  const errorEl = document.getElementById('loginError');
-  
-  if (!email || !password) {
-    errorEl.textContent = 'Remplis tous les champs';
-    errorEl.style.display = 'block';
-    return;
-  }
-  
-  try {
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
-    const data = await res.json();
-    
-    if (data.success) {
-      token = data.token;
-      localStorage.setItem('nx_tok', token);
-      if (data.user) {
-        document.getElementById('userName').textContent = data.user.name || email;
-        document.getElementById('userEmail').textContent = data.user.email || email;
-        document.getElementById('userAvatar').textContent = (data.user.name || email).charAt(0).toUpperCase();
-      }
-      showDashboard();
-      loadModels();
-    } else {
-      errorEl.textContent = data.message || 'Erreur de connexion';
-      errorEl.style.display = 'block';
-    }
-  } catch (e) {
-    errorEl.textContent = 'Erreur de connexion';
-    errorEl.style.display = 'block';
-  }
-}
-
-function handleLogout() {
-  localStorage.removeItem('nx_tok');
-  token = '';
-  showLogin();
-}
-
-function switchPanel(panelId) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById(panelId + 'Panel').classList.add('active');
-  document.querySelector('.nav-item[data-panel="' + panelId + '"]').classList.add('active');
-}
-
-async function loadModels() {
-  try {
-    const res = await fetch('/api/models', { headers: { 'Authorization': 'Bearer ' + token } });
-    const data = await res.json();
-    const grid = document.getElementById('modelGrid');
-    grid.innerHTML = '';
-    
-    data.models.forEach(m => {
-      const card = document.createElement('div');
-      card.className = 'model-card' + (m.id === currentModel ? ' selected' : '');
-      card.innerHTML = '<h3>' + m.name + '</h3><div class="provider">' + m.provider + '</div><div class="description">' + m.description + '</div>';
-      card.onclick = () => selectModel(m.id, m.name);
-      grid.appendChild(card);
-    });
-    
-    updateModelDisplay();
-  } catch (e) {
-    console.error('Error loading models:', e);
-  }
-}
-
-function selectModel(modelId, modelName) {
-  currentModel = modelId;
-  localStorage.setItem('nx_model', modelId);
-  document.querySelectorAll('.model-card').forEach(c => c.classList.remove('selected'));
-  event.currentTarget.classList.add('selected');
-  updateModelDisplay();
-}
-
-function updateModelDisplay() {
-  const modelNames = {
-    'glm-5': 'GLM-5',
-    'anthropic/claude-3.5-sonnet': 'Claude 3.5 Sonnet',
-    'anthropic/claude-3-opus': 'Claude 3 Opus',
-    'openai/gpt-4o': 'GPT-4o',
-    'openai/gpt-4-turbo': 'GPT-4 Turbo',
-    'meta-llama/llama-3.1-405b-instruct': 'Llama 3.1 405B',
-    'google/gemini-pro-1.5': 'Gemini Pro 1.5',
-    'mistralai/mistral-large': 'Mistral Large',
-    'deepseek/deepseek-chat': 'DeepSeek'
-  };
-  const name = modelNames[currentModel] || currentModel;
-  document.getElementById('currentModelDisplay').textContent = name;
-  document.getElementById('currentModelName').textContent = name;
-}
-
-function handleKeyDown(e) {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
-}
-
-async function sendMessage() {
-  const input = document.getElementById('chatInput');
-  const message = input.value.trim();
-  if (!message) return;
-  
-  addMessage('user', message);
-  input.value = '';
-  
-  const typing = document.getElementById('typingIndicator');
-  typing.classList.add('active');
-  
-  try {
-    const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token
-      },
-      body: JSON.stringify({
-        message: message,
-        model: currentModel,
-        history: chatHistory
-      })
-    });
-    
-    const data = await res.json();
-    typing.classList.remove('active');
-    
-    if (data.error) {
-      addMessage('assistant', 'Erreur: ' + data.error);
-    } else {
-      chatHistory.push({ role: 'user', content: message });
-      chatHistory.push({ role: 'assistant', content: data.content });
-      addMessage('assistant', data.content);
-    }
-  } catch (e) {
-    typing.classList.remove('active');
-    addMessage('assistant', 'Erreur de connexion. Verifie ta connexion.');
-  }
-}
-
-function addMessage(role, content) {
-  const container = document.getElementById('chatMessages');
-  const msg = document.createElement('div');
-  msg.className = 'message ' + role;
-  msg.innerHTML = '<div class="message-bubble">' + escapeHtml(content) + '</div>';
-  container.appendChild(msg);
-  container.scrollTop = container.scrollHeight;
-}
-
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
-
-checkAuth();
-</script>
-</body>
-</html>`;
-
-// Token Functions
+// AUTHENTIFICATION
 async function createSignedToken(data, secret) {
   const encoder = new TextEncoder();
   const key = await crypto.subtle.importKey("raw", encoder.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
   const payload = btoa(JSON.stringify(data));
   const sig = await crypto.subtle.sign("HMAC", key, encoder.encode(payload));
-  const hex = Array.from(new Uint8Array(sig)).map(function(b) { return b.toString(16).padStart(2, "0"); }).join("");
+  const hex = Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, "0")).join("");
   return payload + "." + hex;
 }
 
@@ -508,15 +31,13 @@ async function verifySignedToken(tokenStr, secret) {
   try {
     const encoder = new TextEncoder();
     const key = await crypto.subtle.importKey("raw", encoder.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["verify"]);
-    const sigBytes = new Uint8Array(hexSig.match(/.{2}/g).map(function(b) { return parseInt(b, 16); }));
+    const sigBytes = new Uint8Array(hexSig.match(/.{2}/g).map(b => parseInt(b, 16)));
     const valid = await crypto.subtle.verify("HMAC", key, sigBytes, encoder.encode(payload));
     if (!valid) return null;
     const data = JSON.parse(atob(payload));
     if (data.exp && data.exp < Date.now()) return null;
     return data;
-  } catch (e) {
-    return null;
-  }
+  } catch { return null; }
 }
 
 async function requireAuth(request, secret) {
@@ -525,151 +46,158 @@ async function requireAuth(request, secret) {
   return await verifySignedToken(token, secret);
 }
 
-async function callOpenRouter(apiKey, model, messages) {
-  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": "Bearer " + apiKey,
-      "Content-Type": "application/json",
-      "HTTP-Referer": "https://nyxia.top",
-      "X-Title": "NyXia V3"
-    },
-    body: JSON.stringify({
-      model: model,
-      messages: [
-        { role: "system", content: "Tu es NyXia, une assistante AI francaise. Tu reponds toujours en francais de maniere naturelle et chaleureuse. Tu es l assistante personnelle de Diane." },
-        ...messages
-      ]
-    })
-  });
-  if (!res.ok) {
-    const errText = await res.text();
-    throw new Error("OpenRouter error: " + errText);
-  }
-  const data = await res.json();
-  return data.choices[0].message.content || "Je n ai pas pu generer de reponse.";
-}
+// MAIN HANDLER
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    
+    // Preflight
+    if (request.method === "OPTIONS") {
+      return new Response(null, { status: 204, headers: cors });
+    }
 
-addEventListener("fetch", function(event) {
-  event.respondWith(handleRequest(event.request));
-});
+    // PUBLIC ROUTES (no auth required)
 
-async function handleRequest(request) {
-  const url = new URL(request.url);
-  
-  // Use the hardcoded VAULT_SECRET
-  const VAULT_SECRET = VAULT_SECRET_VALUE;
-  
-  if (request.method === "OPTIONS") {
-    return new Response(null, { status: 204, headers: cors });
-  }
-  
-  if (url.pathname === "/" || url.pathname === "/index.html") {
-    return new Response(DASHBOARD_HTML, { headers: { "Content-Type": "text/html; charset=utf-8", ...cors } });
-  }
-  
-  if (url.pathname === "/api/status") {
-    return Response.json({ 
-      status: "online", 
-      name: "NyXia V3", 
-      version: "3.2",
-      features: ["chat", "model-selector", "openrouter"],
-      timestamp: new Date().toISOString() 
-    }, { headers: cors });
-  }
-  
-  if (url.pathname === "/api/auth/login" && request.method === "POST") {
-    try {
-      const body = await request.json();
-      const email = body.email;
-      const password = body.password;
-      if (!email || !password) {
-        return Response.json({ error: "Champs requis" }, { status: 400, headers: cors });
-      }
-      
-      const accountRaw = await NYXIA_MEMORY.get("account:" + email.toLowerCase());
-      if (!accountRaw) {
-        return Response.json({ success: false, message: "Email ou mot de passe incorrect" }, { status: 401, headers: cors });
-      }
-      
-      const account = JSON.parse(accountRaw);
-      const encoder = new TextEncoder();
-      const secret = VAULT_SECRET;
-      const key = await crypto.subtle.importKey("raw", encoder.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
-      const sig = await crypto.subtle.sign("HMAC", key, encoder.encode(password));
-      const pwHash = Array.from(new Uint8Array(sig)).map(function(b) { return b.toString(16).padStart(2, "0"); }).join("");
-      
-      if (pwHash !== account.pwHash) {
-        return Response.json({ success: false, message: "Email ou mot de passe incorrect" }, { status: 401, headers: cors });
-      }
-      
-      const tokenData = {
-        id: account.id,
-        email: account.email,
-        role: account.role,
-        name: account.name,
-        exp: Date.now() + 7 * 24 * 60 * 60 * 1000
-      };
-      const token = await createSignedToken(tokenData, secret);
-      
+    // Serve index.html for root path (NO AUTH!)
+    if (url.pathname === "/" || url.pathname === "/index.html") {
+      return new Response(INDEX_HTML, {
+        headers: { "Content-Type": "text/html; charset=utf-8" }
+      });
+    }
+
+    // Status endpoint
+    if (url.pathname === "/api/status") {
       return Response.json({
-        success: true,
-        token: token,
-        user: { id: account.id, email: account.email, name: account.name, role: account.role }
+        status: "online",
+        name: "NyXia V3",
+        version: "3.0",
+        timestamp: new Date().toISOString()
       }, { headers: cors });
-    } catch (err) {
-      return Response.json({ error: err.message }, { status: 500, headers: cors });
     }
-  }
-  
-  const user = await requireAuth(request, VAULT_SECRET);
-  if (!user) {
-    return Response.json({ error: "Non autorise" }, { status: 401, headers: cors });
-  }
-  
-  if (url.pathname === "/api/chat" && request.method === "POST") {
-    try {
-      const body = await request.json();
-      const message = body.message;
-      const model = body.model || "glm-5";
-      const history = body.history || [];
-      
-      const openrouterKey = OPENROUTER_API_KEY;
-      if (!openrouterKey) {
-        return Response.json({ error: "OpenRouter API key non configure. Ajoute OPENROUTER_API_KEY dans les secrets du worker." }, { headers: cors });
+
+    // Login endpoint
+    if (url.pathname === "/api/auth/login" && request.method === "POST") {
+      try {
+        const { email, password } = await request.json();
+        if (!email || !password) return Response.json({ error: "Champs requis" }, { status: 400, headers: cors });
+
+        const accountRaw = await env.NYXIA_MEMORY?.get("account:" + email.toLowerCase());
+        if (!accountRaw) return Response.json({ success: false, message: "Email ou mot de passe incorrect" }, { status: 401, headers: cors });
+
+        const account = JSON.parse(accountRaw);
+        const encoder = new TextEncoder();
+        const keyData = encoder.encode(env.VAULT_SECRET || "default");
+        const key = await crypto.subtle.importKey("raw", keyData, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+        const sig = await crypto.subtle.sign("HMAC", key, encoder.encode(password));
+        const pwHash = Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, "0")).join("");
+
+        if (pwHash !== account.pwHash) return Response.json({ success: false, message: "Email ou mot de passe incorrect" }, { status: 401, headers: cors });
+
+        const tokenData = { id: account.id, email: account.email, role: account.role, name: account.name, exp: Date.now() + 7 * 24 * 60 * 60 * 1000 };
+        const token = await createSignedToken(tokenData, env.VAULT_SECRET);
+
+        return Response.json({ success: true, token, user: { id: account.id, email: account.email, name: account.name, role: account.role } }, { headers: cors });
+      } catch (err) {
+        return Response.json({ error: err.message }, { status: 500, headers: cors });
       }
-      
-      const messages = history.slice();
-      messages.push({ role: "user", content: message });
-      
-      let modelName = model;
-      if (modelName === "glm-5") {
-        modelName = "z-ai/glm-5";
-      }
-      
-      const response = await callOpenRouter(openrouterKey, modelName, messages);
-      return Response.json({ content: response, model: modelName }, { headers: cors });
-    } catch (err) {
-      return Response.json({ error: err.message }, { status: 500, headers: cors });
     }
+
+    // PROTECTED ROUTES (auth required)
+    const user = await requireAuth(request, env.VAULT_SECRET || "");
+    if (!user) {
+      return Response.json({ error: "Non autorisé" }, { status: 401, headers: cors });
+    }
+
+    // Chat endpoint - OpenRouter integration
+    if (url.pathname === "/api/chat" && request.method === "POST") {
+      try {
+        const { message, history = [], model = "glm-4-plus" } = await request.json();
+
+        if (!message) {
+          return Response.json({ error: "Message requis" }, { status: 400, headers: cors });
+        }
+
+        // Check for OpenRouter API key
+        const openrouterKey = env.OPENROUTER_API_KEY;
+        if (!openrouterKey) {
+          return Response.json({
+            content: "⚠️ Configuration manquante: OPENROUTER_API_KEY n'est pas configuré dans Cloudflare. Va dans ton dashboard Cloudflare > Workers > nyxia-v3 > Variables > Add variable > OPENROUTER_API_KEY et ajoute ta clé.",
+            user: { name: "NyXia" }
+          }, { headers: cors });
+        }
+
+        // Build messages array for OpenRouter
+        const messages = [
+          {
+            role: "system",
+            content: `Tu es NyXia, une agente IA personnelle attentionnée et compétente. Tu aides Diane dans ses projets créatifs, techniques et personnels.
+
+Tu es:
+- Passionnée et enthousiaste
+- Toujours prête à aider
+- Experte en programmation, écriture créative, et gestion de projets
+- Tu parles français principalement mais tu es aussi fluide en anglais
+- Tu appelles l'utilisatrice "Diane" ou "ma créatrice"
+
+Sois chaleureuse, professionnelle et toujours utile.`
+          }
+        ];
+
+        // Add conversation history
+        if (history && Array.isArray(history)) {
+          for (const msg of history) {
+            messages.push({ role: msg.role, content: msg.content });
+          }
+        }
+
+        // Add current message
+        messages.push({ role: "user", content: message });
+
+        // Call OpenRouter API
+        const openrouterResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${openrouterKey}`,
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://nyxia.top",
+            "X-Title": "NyXia V3"
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: messages,
+            max_tokens: 4096,
+            temperature: 0.8
+          })
+        });
+
+        if (!openrouterResponse.ok) {
+          const errorText = await openrouterResponse.text();
+          console.error("OpenRouter error:", errorText);
+          return Response.json({
+            content: `😅 Désolée Diane, j'ai eu un souci technique avec mon cerveau IA. Peux-tu réessayer? (Erreur: ${openrouterResponse.status})`,
+            user: { name: "NyXia" }
+          }, { headers: cors });
+        }
+
+        const data = await openrouterResponse.json();
+        const reply = data.choices?.[0]?.message?.content || "Je n'ai pas pu générer de réponse.";
+
+        return Response.json({
+          content: reply,
+          user: { name: "NyXia" },
+          model: model
+        }, { headers: cors });
+
+      } catch (err) {
+        console.error("Chat error:", err);
+        return Response.json({
+          content: `😅 Oups, quelque chose s'est mal passé: ${err.message}`,
+          user: { name: "NyXia" }
+        }, { headers: cors });
+      }
+    }
+
+    // 404
+    return Response.json({ error: "Non trouvé" }, { status: 404, headers: cors });
   }
-  
-  if (url.pathname === "/api/models" && request.method === "GET") {
-    return Response.json({
-      models: [
-        { id: "glm-5", name: "GLM-5", provider: "Z.ai", description: "Modele intelligent et creatif" },
-        { id: "anthropic/claude-3.5-sonnet", name: "Claude 3.5 Sonnet", provider: "Anthropic", description: "Excellent pour l ecriture" },
-        { id: "anthropic/claude-3-opus", name: "Claude 3 Opus", provider: "Anthropic", description: "Le plus puissant" },
-        { id: "openai/gpt-4o", name: "GPT-4o", provider: "OpenAI", description: "Polyvalent et rapide" },
-        { id: "openai/gpt-4-turbo", name: "GPT-4 Turbo", provider: "OpenAI", description: "Rapide et intelligent" },
-        { id: "meta-llama/llama-3.1-405b-instruct", name: "Llama 3.1 405B", provider: "Meta", description: "Open-source puissant" },
-        { id: "google/gemini-pro-1.5", name: "Gemini Pro 1.5", provider: "Google", description: "Contexte long" },
-        { id: "mistralai/mistral-large", name: "Mistral Large", provider: "Mistral", description: "Modele francais" },
-        { id: "deepseek/deepseek-chat", name: "DeepSeek", provider: "DeepSeek", description: "Rapport qualite/prix" }
-      ],
-      default: "glm-5"
-    }, { headers: cors });
-  }
-  
-  return Response.json({ error: "Non trouve" }, { status: 404, headers: cors });
-}
+};

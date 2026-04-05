@@ -1,27 +1,33 @@
-# NP-Diane - NyXia Project
+# NyXia V3 - Worker Cloudflare
 
-## Problème actuel
+## Description
+NyXia V3 est une agente IA personnelle avec interface dashboard complète.
 
-NyXia répond : "Chat endpoint - worker is being updated"
+## Structure
+- `worker.js` - Worker Cloudflare complet avec HTML inline
 
-## Fichiers
+## Fonctionnalités
+- 🔐 Authentification (Email + Google OAuth)
+- 💬 Chat avec IA (OpenRouter/GLM-5)
+- 📁 Gestion de projets
+- 📖 Base de connaissance
+- 🔗 Intégrations (GitHub, Cloudflare, ManyChat, Systeme.io)
+- 🔑 Tokens & Secrets (configuration sécurisée)
+- 📚 Gestion des livres
+- 🧠 Mémoire
+- 📎 Support fichiers (PDF, Images, ZIP)
 
-- `worker.js` - Code du Cloudflare Worker nyxia-v3
+## Déploiement sur Cloudflare
 
-## Configuration
+1. Aller sur Cloudflare Dashboard > Workers & Pages
+2. Créer un nouveau Worker "nyxia-v3"
+3. Copier le contenu de `worker.js`
+4. Configurer les variables d'environnement:
+   - `VAULT_SECRET` - Secret pour le vault
+   - `OPENROUTER_API_KEY` - Clé API OpenRouter
 
-- Domaine: https://nyxia.top
-- Worker: nyxia-v3
-- Account ID: e13f8e75dfb03c488d4a0c9290cc0c81
+## Sécurité
+⚠️ **IMPORTANT**: Les clés API (OpenRouter, GitHub, etc.) doivent être configurées dans les secrets Cloudflare, JAMAIS dans le code!
 
-## Secrets nécessaires
-
-- VAULT_SECRET
-- OPENROUTER_API_KEY
-- GITHUB_TOKEN
-
-## KV Namespaces
-
-- NYXIA_MEMORY (id: d129baa51bc54f1e9ae8893369873fd2)
-- NYXIA_BOOKS (id: 2d7ee25f73d64ad28054cb75b47315d1)
-- NYXIA_VAULT (id: c62f5d8ca37e450bb8c9efba5263214c)
+## Auteur
+Diane Boyer - NyXia Publication
