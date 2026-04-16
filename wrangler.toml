@@ -16,7 +16,3 @@ id = "2d7ee25f73d64ad28054cb75b47315d1"
 [[kv_namespaces]]
 binding = "NYXIA_VAULT"
 id = "c62f5d8ca37e450bb8c9efba5263214c"
-
-# Secrets à configurer via Cloudflare Dashboard ou wrangler:
-# wrangler secret put VAULT_SECRET
-# wrangler secret put OPENROUTER_API_KEY
