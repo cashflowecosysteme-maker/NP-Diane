@@ -5,15 +5,18 @@ compatibility_date = "2024-01-01"
 [vars]
 ENVIRONMENT = "production"
 
-# KV Namespace pour la mémoire
-# [[kv_namespaces]]
-# binding = "NYXIA_MEMORY"
-# id = "your-kv-namespace-id"
+[[kv_namespaces]]
+binding = "NYXIA_MEMORY"
+id = "d129baa51bc54f1e9ae8893369873fd2"
 
-# Secrets à configurer via Cloudflare Dashboard:
-# - VAULT_SECRET
-# - OPENROUTER_API_KEY
-# - GITHUB_TOKEN
-# - CLOUDFLARE_API_TOKEN
-# - MANYCHAT_TOKEN
-# - SYSTEMEIO_API_KEY
+[[kv_namespaces]]
+binding = "NYXIA_BOOKS"
+id = "2d7ee25f73d64ad28054cb75b47315d1"
+
+[[kv_namespaces]]
+binding = "NYXIA_VAULT"
+id = "c62f5d8ca37e450bb8c9efba5263214c"
+
+# Secrets à configurer via Cloudflare Dashboard ou wrangler:
+# wrangler secret put VAULT_SECRET
+# wrangler secret put OPENROUTER_API_KEY
